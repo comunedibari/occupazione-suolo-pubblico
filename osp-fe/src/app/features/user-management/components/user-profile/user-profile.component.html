@@ -1,0 +1,227 @@
+<div *ngIf="this.isMyProfile" class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Profilo Utente</h4>
+  </div>
+
+  <form #insertForm="ngForm">
+  <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+
+    <div *ngIf="!this.isMyProfile && !this.isOperatoreSportello" class="p-col-12">
+      <legend class="legend">Ruolo: *</legend>
+     </div>
+
+     <div *ngIf="!this.isMyProfile && !this.isOperatoreSportello" class="p-col-12">
+      <div class="p-grid pgrid-padding">
+      <ng-container *ngFor="let element of tipoGruppi">
+        <div class="p-md-4 p-lg-3 p-sm-12">
+          <p-radioButton name="ruolo" [label]="element.descrizione" [value]="element.id" [(ngModel)]="user.idGruppo"
+            (onClick)="onCheckedGroup($event)" styleClass="checkbox-form" (onClick)="resetSeConcessionarioDestOrdinanze()"></p-radioButton>
+      </div>
+      </ng-container>
+      </div>
+     </div>
+    <div class="p-col-12 p-mt-4">
+      <legend class="legend">Dati anagrafici</legend>
+    </div>
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+        <label for="txtinputNome" class="p-text-bold">Nome *</label>
+        <input id="txtinputNome" name="txtinputNome" (change)="calculateCF()" (keyup)="onNameKeyup($event)" type="text" [(ngModel)]="user.nome" pInputText
+          aria-required="true" required [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin">
+    </div>
+
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+        <label for="txtinputCognome" class="p-text-bold">Cognome *</label>
+        <input id="txtinputCognome" name="txtinputCognome" (change)="calculateCF()" (keyup)="onNameKeyup($event)" [(ngModel)]="user.cognome" type="text" pInputText
+         aria-required="true" required [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin">
+    </div>
+
+    <div class="p-field p-col-6 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputRagioneSociale" class="p-text-bold">Ragione Sociale {{isConcessionario ? ' *' : ''}}</label>
+      <input id="txtinputRagioneSociale" name="txtinputRagioneSociale" [(ngModel)]="user.ragioneSociale" type="text" pInputText
+      aria-required="true" [required]="isConcessionario" [disabled]="!this.isConcessionario" [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin">
+    </div>
+
+    <div *ngIf="isConcessionario" class="p-field p-col-6 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtIndirizzo" class="p-text-bold">Indirizzo {{isConcessionario ? ' *' : ''}}</label>
+      <input id="txtIndirizzo" name="txtIndirizzo" [(ngModel)]="user.indirizzo" type="text" pInputText
+      aria-required="true" [required]="isConcessionario" [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin">
+    </div>
+
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputSesso" class="p-text-bold">Sesso *</label>
+        <p-selectButton name="txtinputSesso" (change)="calculateCF()" [options]="sessoUsers" [(ngModel)]="user.sesso" optionLabel="label" optionValue="code"
+        styleClass="button-select" [disabled]="this.isMyProfile && !isEditMode && !this.isAdmin"></p-selectButton>
+    </div>
+
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputDatadinascita" class="p-text-bold">Data di nascita *</label>
+        <p-calendar name='txtinputDatadinascita' (onClose)="calculateCF()" dateFormat="dd/mm/yy" [(ngModel)]="user.dataDiNascita" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+        placeholder="dd/mm/yyyy" appendTo="body" icon="pi pi-calendar" [showIcon]="true" inputId="txtinputDatadinascita" 
+        [maxDate]="limitDataNascita" styleClass="data-calendar" required [disabled]="this.isMyProfile && !isEditMode && !this.isAdmin"></p-calendar>
+    </div>
+
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputLuogodinascita" class="p-text-bold">Città di nascita *</label>
+      <input id="txtinputLuogodinascita" name="txtinputLuogodinascita" (change)="calculateCF()" [(ngModel)]="user.luogoDiNascita" type="text" pInputText
+        aria-required="true" required [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin">
+    </div>
+
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputProvinciadinascita" class="p-text-bold">Provincia di nascita *</label>
+      <input id="txtinputProvinciadinascita" name="txtinputProvinciadinascita" (change)="calculateCF()" [(ngModel)]="user.provinciaDiNascita" type="text" pInputText
+        aria-required="true" placeholder="AA" minlength="2" maxlength="2" required [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin"
+          oninput="this.value = this.value.toUpperCase()"
+        >
+    </div>
+
+    <div *ngIf="!isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-8 p-pb-3 p-m-0"></div>
+
+    <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputCodicefiscale" class="p-text-bold">Codice Fiscale/Partita IVA *</label>
+      <input id="txtinputCodicefiscale" name="txtinputCodicefiscale" #txtinputCodicefiscale="ngModel" [(ngModel)]="user.codiceFiscale" pInputText
+        aria-required="true" required minlength="11" maxlength="16" [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin"
+        oninput="this.value = this.value.toUpperCase()"
+        >
+         <p-message *ngIf="txtinputCodicefiscale.dirty && user.codiceFiscale?.length < 11" severity="error" text="Lunghezza CF/P.IVA non valida"></p-message>
+    </div>
+
+    <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputEmail" class="p-text-bold">Email/PEC *</label>
+      <input id="txtinputEmail" name="txtinputEmail" pKeyFilter="email" (keyup)="onEmailKeyup($event)" [(ngModel)]="user.email" type="email" pInputText
+         aria-required="true" required [email]="true" #email="ngModel" [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin">
+         <p-message *ngIf="email.dirty && !email.valid" severity="error" text="Formato email non valido."></p-message>
+    </div>
+
+    <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputNumtel" class="p-text-bold">Recapito telefonico</label>
+      <input id="txtinputNumtel" name="txtinputNumtel" [(ngModel)]="user.numTel" type="text" pInputText minlength="9" maxlength="10">
+    </div>
+
+    <div *ngIf="this.isMyProfile && !isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputUsername" class="p-text-bold">Username *</label>
+      <input id="txtinputUsername" name="txtinputUsername" [ngModel]="user.username" type="text" pInputText
+         aria-required="true" [readonly]="this.isMyProfile || isEditMode">
+    </div>
+
+    <div *ngIf="this.isMyProfile" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputRole" class="p-text-bold">Ruolo *</label>
+      <input id="txtinputRole" name="txtinputRole" [ngModel]="this.userRole" type="text" pInputText
+         aria-required="true" [readonly]="true">
+    </div>
+
+    <div *ngIf="this.isMyProfile" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputLastLogin" class="p-text-bold">Ultimo accesso</label>
+      <input id="txtinputLastLogin" name="txtinputLastLogin" [ngModel]="user.lastLogin | date: 'dd/MM/yyyy HH:mm:ss'" type="text" pInputText aria-required="true" [readonly]="true">
+    </div>
+
+    <div *ngIf="!this.isAdmin && !isConcessionario" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtuoid" class="p-text-bold">Denominazione U.O. {{!this.isAdmin ? ' *' : ''}}</label>
+      <p-dropdown id="txtuoid" name="txtuoid" [options]="tipoDenominazioneUo$ | async" [(ngModel)]="user.uoId"
+          placeholder="Seleziona denominazione U.O." required="true" maxlength="255" appendTo="body"
+          optionValue="uoId" optionLabel="denominazione" aria-required="true" [required]="!this.isAdmin"
+          [readonly]="this.isMyProfile && !isEditMode && !this.isAdmin" [disabled]="true"></p-dropdown>
+    </div>
+
+    <div *ngIf="!this.isEditMode && !this.isMyProfile" class="p-col-12">
+      <legend class="legend">Credenziali accesso:</legend>
+    </div>
+
+    <div *ngIf="!this.isEditMode && !this.isMyProfile" class="p-field p-col-12 p-sm-6 p-md-12 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputUsername" class="p-text-bold">Username *</label>
+      <input type="text" id="txtinputUsername" name="txtinputUsername" [(ngModel)]="user.username" pInputText
+        aria-required="true" required>
+    </div>
+
+    <div *ngIf="!this.isEditMode && !this.isMyProfile" class="p-field p-col-12 p-sm-6 p-md-12 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtinputPassword" class="p-text-bold">Password *</label>
+      <p-password type="password" id="txtinputPassword" name="txtinputPassword" [feedback]="true" promptLabel="Inserisci password" weakLabel="Debole" mediumLabel="Media" strongLabel="Forte"
+        [(ngModel)]="user.password" aria-required="true" required [toggleMask]="true"></p-password>
+    </div>
+
+    <div *ngIf="!this.isEditMode && !this.isMyProfile" class="p-field p-col-12 p-sm-6 p-md-12 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtInsertRePassword" class="p-text-bold">Conferma password *</label>
+      <p-password type="password" id="txtInsertRePassword" name="txtInsertRePassword" [feedback]="true" promptLabel="Inserisci password" weakLabel="Debole" mediumLabel="Media" strongLabel="Forte"
+        [(ngModel)]="txtInsertRePassword" aria-required="true" required [toggleMask]="true"></p-password>
+    </div>
+
+    <div *ngIf="this.isEditMode && !this.isMyProfile" style="display: inline-block;" class="p-col-12">
+      <legend>
+        <div style="display: inherit" class="legend">
+          Abilitazione utente:
+          <div style="display: inline-block;">
+            <p-checkbox name="checkBoxEnabled" id="checkBoxEnabled" pTooltip="{{user.enabled ? 'Utente Abilitato' : 'Utente Disabilitato'}}"
+              [binary]="true" [(ngModel)]="user.enabled" styleClass="checkbox-form"></p-checkbox>
+          </div>
+        </div>
+      </legend>
+   </div>
+
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="{{this.isEditMode || this.isMyProfile ? 'Salva' : 'Inserisci'}}" type="button" class="btn-custom-style button-avanti" (click)="submitDatiUtente();"
+      [disabled]="insertForm.invalid || !user.idGruppo"></button>
+    </div>
+
+  </div>
+  </form>
+
+  <form #cambioPasswordForm="ngForm">
+  <div *ngIf="this.isMyProfile" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+    <div class="p-col-12">
+    <legend class="legend">Cambio password</legend>
+   </div>
+
+    <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtnewPassword" class="p-text-bold">Password attuale</label>
+      <p-password type="password" id="txtOldPassword" name="txtOldPassword" [(ngModel)]="txtOldPassword" [feedback]="true" promptLabel="Inserisci password" weakLabel="Debole" mediumLabel="Media" strongLabel="Forte"
+        aria-required="true" required [toggleMask]="true"></p-password>
+    </div>
+
+    <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtnewPassword" class="p-text-bold">Nuova password</label>
+      <p-password type="password" class="Form-input" id="txtnewPassword" name="txtnewPassword" [(ngModel)]="user.password" [feedback]="true" promptLabel="Inserisci password" weakLabel="Debole" mediumLabel="Media" strongLabel="Forte"
+        aria-required="true" (change)="validatePassword($event)" required [toggleMask]="true"></p-password>
+      <p-message *ngIf="!!passwordError" severity="error" text="La lunghezza minima della password è di 6 caratteri"></p-message>
+    </div>
+
+    <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+      <label for="txtInsertRePassword" class="p-text-bold">Conferma password</label>
+      <p-password type="password" class="Form-input" id="txtInsertRePassword" name="txtInsertRePassword" [feedback]="true" promptLabel="Inserisci password" weakLabel="Debole" mediumLabel="Media" strongLabel="Forte"
+        [(ngModel)]="txtInsertRePassword" aria-required="true" required [toggleMask]="true"></p-password>
+    </div>
+
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Cambia" [disabled]="cambioPasswordForm.invalid" type="button"
+        class="btn-custom-style button-avanti" (click)="cambiaPasswordUtente(cambioPasswordForm);"></button>
+    </div>
+
+  </div>
+  </form>
+
+  <p-dialog [(visible)]="showMunicipiDialog" (onHide)="onHideMunicipiDialog()" styleClass="dialog-500" [draggable]="false" [resizable]="false" [modal]="true">
+    <p-header>
+        Municipio di appartenenza:
+    </p-header>
+      <div class="p-grid p-m-1">
+        <ng-container *ngFor="let element of (tipoMunicipi$ | async)">
+          <div *ngIf="!isPoliziaLocale && !isSettoreUrbanizzazioniPrimarie" class="p-col-6 p-lg-4">
+            <p-radioButton name="municipio" [label]="element.descrizione" [value]="element.id" [(ngModel)]="newMunicipio"
+             styleClass="checkbox-form"></p-radioButton>
+          </div>
+
+          <!-- Dialog Per Polizia Locale con multiple checkbox -->
+          <div *ngIf="isPoliziaLocale || isSettoreUrbanizzazioniPrimarie" class="p-col-6 p-lg-4" >
+            <p-checkbox name="municipio" [inputId]="element.id" [label]="element.descrizione" [value]="element.id" [(ngModel)]="newMunicipi"
+            styleClass="checkbox-form" [ngModelOptions]="{standalone: true}"></p-checkbox>
+          </div>
+
+
+        </ng-container>
+      </div>
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style"
+          (click)="closeMunicipioDialog('annulla')"></button>
+        <button pButton label="Conferma" class="btn-custom-style"
+          (click)="closeMunicipioDialog()" [disabled]="!newMunicipio && !newMunicipi"></button>
+      </div>
+    </p-footer>
+  </p-dialog>

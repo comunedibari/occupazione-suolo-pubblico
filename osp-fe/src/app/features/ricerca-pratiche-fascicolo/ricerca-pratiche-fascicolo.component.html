@@ -1,0 +1,134 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Ricerca pratiche</h4>
+</div>
+
+<form [formGroup]="fascicoloForm">
+    <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+
+        <div class="p-col-12">
+            <legend class="legend">Cerca il fascicolo nel sistema:</legend>
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputNome" class="p-text-bold">Nome</label>
+            <input type="text" id="txtinputNome" name="txtinputNome" pInputText
+                formControlName="nome">
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputCognome" class="p-text-bold">Cognome</label>
+            <input type="text" id="txtinputCognome" name="txtinputCognome" pInputText
+                formControlName="cognome">
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputRagioneSociale" class="p-text-bold">Ragione Sociale</label>
+            <input type="text" id="txtinputRagioneSociale" name="txtinputRagioneSociale" pInputText
+                formControlName="denominazioneRagSoc">
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputCodiceFiscale" class="p-text-bold">Codice Fiscale / Partita IVA</label>
+            <input type="text" id="txtinputCodiceFiscale" name="txtinputCodiceFiscale" pInputText
+                formControlName="codFiscalePIva">
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputProtocollo" class="p-text-bold">Num. Protocollo</label>
+            <input type="text" id="txtinputProtocollo" name="txtinputProtocollo" pInputText
+                formControlName="numProtocollo">
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputDetermina" class="p-text-bold">Num. Determina</label>
+            <input type="text" id="txtinputDetermina" name="txtinputDetermina" pInputText
+                formControlName="numProvvedimento">
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <div class="flex-space-between">
+              <label for="txtstatoPratica" class="p-text-bold">Stato Pratica</label>
+              <i *ngIf="this.fascicoloForm.get('idStatoPratica').value || this.fascicoloForm.get('idStatoPratica').value == 0" class="pi pi-times-circle icon-delete-filter pointer" (click)="clearFilter('idStatoPratica')" pTooltip="Deseleziona filtro stato pratica"></i>
+            </div>
+            <p-dropdown [options]="optionsStatoPratica$ | async" formControlName="idStatoPratica" id="txtstatoPratica"
+                optionValue="id" optionLabel="descrizione" placeholder="Seleziona stato pratica"></p-dropdown>
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <div class="flex-space-between">
+              <label for="txtTipologiaProcesso" class="p-text-bold">Tipologia Processo</label>
+              <i *ngIf="this.fascicoloForm.get('tipologiaProcesso').value || this.fascicoloForm.get('tipologiaProcesso').value == 0" class="pi pi-times-circle icon-delete-filter pointer" (click)="clearFilter('tipologiaProcesso')" pTooltip="Deseleziona filtro tipologia processo"></i>
+            </div>
+            <p-dropdown [options]="optionsTipoProcesso" formControlName="tipologiaProcesso" id="txtTipologiaProcesso"
+                optionValue="id" optionLabel="descrizione" placeholder="Seleziona tipologia processo"></p-dropdown>
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+          <div class="flex-space-between">
+            <label for="txtIndirizzo" class="p-text-bold">Indirizzo Occupazione</label>
+          </div>
+          <p-autoComplete (focusout)="addressLoseFocus($event)" (change)="handleAddressChange($event)" formControlName="indirizzo" id="txtIndirizzo" field="indirizzo"
+              [suggestions]="civilarioResults" (completeMethod)="searchCivilario($event)" (onSelect)="onAddressSelect($event)" delay=200 placeholder="indirizzo, civico/esponente"></p-autoComplete>
+        </div>
+
+        <div class="p-d-flex p-col-12 p-jc-end">
+            <button pButton label="Cerca" type="button" class="btn-custom-style button-avanti"
+            (click)="cercaPratiche()" [disabled]="isFormGroupEmpty"></button>
+        </div>
+    </div>
+</form>
+
+<div class="p-m-3">
+    <app-table-prime-ng
+      [dataSource]="this.dataSource"
+      [columnSchema]="this.columnSchema"
+      [actions]="this.actions"
+      [initSortColumn]="initSortColumn"
+      [directionSortColumn]="directionSortColumn"
+      (onEvent)="this.onTableEvent($event)"
+      [titleTable]="titleTable"
+      [exportName]="exportName"
+      [globalFilters]="globalFilters"
+      [customSort]=true
+    >
+    </app-table-prime-ng>
+</div>
+
+<p-dialog header="Richiesta rettifica date:" [(visible)]="showConfermaRettificaDate" (onHide)="showConfermaRettificaDate = false; notePerCittadino = null" styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-1">
+    <div class="p-col-12">
+      <div class="p-field">
+        <label class="p-text-bold">Note: *</label>
+        <textarea pInputTextarea [rows]="3" type="textArea" pInputText [(ngModel)]="this.notePerCittadino" class="text-area-no-resize stretch"></textarea>
+      </div>
+      <div class="p-mt-2">
+        <p class="p-text-bold label">Confermi la richiesta di rettifica delle date di occupazione?</p>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="showConfermaRettificaDate = false; notePerCittadino = null"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="avvioRettificaDate()" [disabled]="!notePerCittadino"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+  <div class="p-grid p-m-2"> 
+      <div class="p-col-12">
+          <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+          <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+          <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+      </div>
+  </div> 
+  <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+      <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+          (click)="avvioRettificaDate()"></button> 
+      <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+      </div>  
+  </p-footer>
+</p-dialog>

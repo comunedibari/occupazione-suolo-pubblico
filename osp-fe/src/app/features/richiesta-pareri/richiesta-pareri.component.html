@@ -1,0 +1,247 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+  <h4 class="intestazione-componente">{{this.authService.getGroup() == 3 || this.authService.getGroup() == 4 ? 'Rielaborazione pareri' : 'Esprimi parere'}}</h4>
+</div>
+
+<div class="p-m-3">
+  <app-table-prime-ng
+    [dataSource]="this.dataSource"
+    [columnSchema]="this.columnSchema"
+    [actions]="this.actions"
+    [initSortColumn]="initSortColumn"
+    [directionSortColumn]="directionSortColumn"
+    (onEvent)="this.onTableEvent($event)"
+    [titleTable]="titleTable"
+    [exportName]="exportName"
+    [globalFilters]="globalFilters"
+    [customSort]=true
+  >
+  </app-table-prime-ng>
+</div>
+
+<p-dialog header="Esprimi parere:" [(visible)]="showEsprimiParereDialog" (onHide)="closeEsprimiPareriDialog()"
+  styleClass="dialog-950" [draggable]="false" [resizable]="false" [modal]="true">
+  <form [formGroup]="esprimiParereForm">
+    <div class="p-grid p-m-2">
+      <div class="p-col-12">
+
+        <div class="p-field">
+          <label for="inputCompetenza" class="p-text-bold">Competenza *</label>
+          <p-selectButton name="inputCompetenza" [options]="competenza" optionLabel="label" optionValue="value"
+              formControlName="competenza" styleClass="button-select-competenza" (onChange)="controlloParere()"></p-selectButton>
+        </div>
+        <div class="p-field">
+          <label class="p-text-bold">Nota *</label>
+          <textarea pInputTextarea [rows]="3" formControlName="nota" class="text-area-no-resize stretch"></textarea>
+        </div>
+        <div class="p-field p-mt-1 p-mb-2">
+          <label class="p-text-bold">Download template {{getDescrizioneTipoTemplate()}}</label>
+          <button pButton icon="pi pi-download" class="btn-custom-style p-button-rounded p-ml-2" (click)="generaTemplateElaborato(getTipoTemplate())"></button>
+        </div>
+        <div class="p-field p-mt-1 p-mb-4">
+          <label class="p-text-bold">Download template Ordinanza</label>
+          <button pButton icon="pi pi-download" class="btn-custom-style p-button-rounded p-ml-2" (click)="generaTemplateElaborato(isTemplateOrdinanza())"></button>
+        </div>
+        <div class="p-field">
+          <label class="p-text-bold">Upload documento {{ isUploadMandatory() ? '*' : ''}}</label>
+
+          <app-upload-file
+            [pratica]="this.pratica"
+            [mode]="uploadMode"
+            [fileClearToggle]="showEsprimiParereDialog"
+            [destinazioneAllegato]="destinazioneAllegato"
+            [idGruppoDestinatarioParere]="idGruppoDestinatarioParere"
+            [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+            [nonCompetenza]="!esprimiParereForm.get('competenza').value"
+            (idDocUploaded)="onDocUploaded($event)"
+            (docRemoved)="onDocRemoved($event)"
+            (mandatoryDocuments)="onMandatoryDocuments($event)"
+            (fileInCheckout)="fileInCheckout('esprimiParereFilesInCheckout')($event)"
+            (onDocUploaded)="onEsprimiParereUploadedFile($event)"
+          >
+          </app-upload-file>
+        </div>
+
+        <div class="p-fluid p-formgrid p-grid p-m-2" *ngIf="showUtentiOrdinanza()">
+          <label><b>Invia PEC ordinanza a:</b></label>
+          <ng-container *ngFor="let element of (utentiDestinatariOrdinanze$ | async)">
+            <div class="p-field p-col-4 p-pb-3 p-m-0">
+              <p-checkbox name="destinatariOrdinanza" [label]="element.ragioneSociale || element.email" [value]="element.id"
+                styleClass="checkbox-form" [formControl]="esprimiParereForm.controls['destinatariOrdinanza']"></p-checkbox>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="p-field">
+          <label for="inputParere" class="p-text-bold">Parere *</label>
+          <p-selectButton name="inputParere" [options]="parere" optionLabel="label" optionValue="value" optionDisabled="disabled"
+              formControlName="parere" styleClass="button-select-parere"></p-selectButton>
+        </div>
+
+        <div class="p-field" *ngIf="isPoliziaLocale" >
+          <label for="inputRichiestaParere" class="p-text-bold">Richiedi pareri</label>
+          <p-selectButton name="inputRichiestaParere" [options]="abilitaRichiestaPareri" optionLabel="label" optionValue="value" optionDisabled="disabled"
+              formControlName="abilitaRichiestaPareri" styleClass="button-select-competenza"></p-selectButton>
+
+          <div *ngIf="valueRichiestaPareri">
+            {{richiediParereDialog(this.pratica)}}
+            <div *ngIf="attoriPareriSchema" class="p-grid p-m-2">
+              <div *ngIf="attoriPareriSchema.length > 0" class="p-col-12">
+              <div *ngFor="let attori of attoriPareriSchema" class="p-field-checkbox">
+                <p-checkbox name="pareriGroup" [value]="attori.id" [label]="attori.descrizione" [disabled]="attori.flg_disabled" [(ngModel)]="selectedAttori" [ngModelOptions]="{standalone: true}"></p-checkbox>
+              </div>
+              </div>
+              <div *ngIf="attoriPareriSchema.length == 0" class="p-col-12">
+              <p>Al momento non è possibile richiedere ulteriori pareri dato che sono già state inoltrate le richieste di parere a tutti gli organi competenti</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </form>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="closeEsprimiPareriDialog()"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="esprimiTuttiPareri()" [disabled]="isConfirmEnabledControl()"></button> <!--  esprimiParereForm.invalid || showSpinner -->
+    </div>
+  </p-footer>
+</p-dialog>
+
+
+<p-dialog header="Richiedi parere:" [(visible)]="showRichiediParereDialog" (onHide)="closeRichiediPareriDialog()" styleClass="dialog-500" [draggable]="false" [resizable]="false" [modal]="true">
+    <div *ngIf="attoriPareriSchema" class="p-grid p-m-2">
+      <div *ngIf="attoriPareriSchema.length > 0" class="p-col-12">
+        <div *ngFor="let attori of attoriPareriSchema" class="p-field-checkbox">
+          <p-checkbox name="pareriGroup" [value]="attori.id" [label]="attori.descrizione" [disabled]="attori.flg_disabled" [(ngModel)]="selectedAttori"></p-checkbox>
+        </div>
+      </div>
+      <div *ngIf="attoriPareriSchema.length == 0" class="p-col-12">
+        <p>Al momento non è possibile richiedere ulteriori pareri dato che sono già state inoltrate le richieste di parere a tutti gli organi competenti</p>
+      </div>
+    </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="closeRichiediPareriDialog()"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="inviaRichiestaPareri()" [disabled]="selectedAttori.length == 0"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Rielabora parere:" [(visible)]="showRielaboraParereDialog" (onHide)="closeRielaboraParereDialog()" styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-1">
+    <div class="p-col-12 p-p-0">
+      <p-tabView styleClass="tabview-custom" [(activeIndex)]="indexRielabora">
+        <p-tabPanel *ngFor="let option of rielaboraOptions" headerStyleClass="header-tab">
+            <ng-template pTemplate = "header">
+                <span class="header-tab-label spanEllipsis" [pTooltip]="option.label">{{option.label}}</span>
+            </ng-template>
+            <ng-template pTemplate="content">
+              <container-element [ngSwitch]="option.value">
+                <div *ngSwitchCase="'approva'">
+                  <div class="p-grid p-nogutter p-ai-stretch vertical-container">
+                    <div class="p-grid p-nogutter p-ai-center p-jc-center stretch p-mt-3">
+                      <button pButton icon="pi pi-download" class="btn-custom-style p-mr-2" (click)="generaTemplateElaborato(getIdDeterminaConcessione())"></button>
+                      <label class="p-text-bold label">Clicca sul bottone per generare la Determina</label>
+                    </div>
+                  </div>
+                </div>
+                <div *ngSwitchCase="'integrazione'">
+                  <div class="p-field p-col-12 p-m-0">
+                    <div class="p-col-12">
+                      <div class="p-field" *ngIf="isFaseIntegrazioneMassimaRaggiunta && !isFaseDiniego">
+                        <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+                        <label class="p-text-bold">Attenzione: la pratica ha già subito il numero massimo di integrazioni.  Al prossimo invio si procederà al preavviso di diniego.</label>
+                      </div>
+                      <div class="p-field" *ngIf="isFaseDiniego">
+                        <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+                        <label class="p-text-bold">Attenzione: la pratica ha già subito una fase di diniego. Confermando l'operazione,
+                          la pratica passerà nello stato "Pratica da rigettare".
+                        </label>
+                      </div>
+                      <label class="p-text-bold label">Note: *</label>
+                      <textarea pInputTextarea [rows]="5" [(ngModel)]="this.noteIstruttoreMunicipio" class="text-area-no-resize stretch"></textarea>
+                      <p-checkbox *ngIf="isEsenteOnInit && !isFlagEsenzioneModificato" class="p-mt-1" name="checkBoxEsenzione" id="checkBoxEsenzione" [binary]="true" [(ngModel)]="annullaEsenzioneMarcaDaBollo"
+                        label="Annulla dichiarazione esenzione marca da bollo" (onChange)="variazioneDichiarazioneEsenzione()">
+                      </p-checkbox>
+                      <div class="p-field p-mt-2" *ngIf="!isFaseDiniego">
+                        <label class="p-text-bold">Upload documento</label>
+                        <app-upload-file
+                          [pratica]="this.pratica"
+                          [fileClearToggle]="showRielaboraParereDialog"
+                          [mode]="uploadModeRichiestaIntegrazione"
+                          [destinazioneAllegato]="destinazioneAllegatoRichiestaIntegrazione"
+                          [filtroStatoPratica]="filtroStatoPratica"
+                          [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+                          [richistaIntegrazioneFiles]="newRichiestaIntegrazioneUploadedFiles"
+                          (fileInCheckout)="fileInCheckout('richiestaIntegrazioneFilesInCheckout')($event)"
+                          (onDocUploaded)="onRichiestaIntegrazioneUploadedFile($event)"
+                        >
+                        </app-upload-file>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngSwitchCase="'rigetta'">
+                  <div class="p-field p-col-12 p-m-0">
+                    <div class="p-col-12">
+                      <div class="p-field" *ngIf="isFaseDiniego">
+                        <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+                        <label class="p-text-bold">Attenzione: la pratica ha già subito una fase di diniego. Confermando l'operazione, la pratica passerà nello stato "Pratica da rigettare".</label>
+                      </div>
+                      <label class="p-text-bold label">Note: *</label>
+                      <textarea pInputTextarea [rows]="5" [(ngModel)]="this.noteIstruttoreMunicipio" class="text-area-no-resize stretch"></textarea>
+                      <div class="p-field p-mt-2" *ngIf="!isFaseDiniego">
+                        <label class="p-text-bold">Upload documento</label>
+                        <app-upload-file
+                          [pratica]="this.pratica"
+                          [fileClearToggle]="showRielaboraParereDialog"
+                          [mode]="uploadModeRichiestaIntegrazione"
+                          [destinazioneAllegato]="destinazioneAllegatoRichiestaIntegrazione"
+                          [filtroStatoPratica]="filtroStatoPratica"
+                          [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+                          [richistaIntegrazioneFiles]="newRigettaUploadedFiles"
+                          (fileInCheckout)="fileInCheckout('rigettaFilesInCheckout')($event)"
+                          (onDocUploaded)="onRigettaUploadedFile($event)"
+                        >
+                        </app-upload-file>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </container-element>
+            </ng-template>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="closeRielaboraParereDialog()"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="inviaRielaboraParere(indexRielabora)" [disabled]="isConfirmRielaboraParereDisabled(indexRielabora)"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+  <div class="p-grid p-m-2">
+      <div class="p-col-12">
+        <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+        <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+        <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+      </div>
+  </div>
+  <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+			    (click)="this[actionRiprotocollazione]()"></button>
+        <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+      </div>
+  </p-footer>
+</p-dialog>

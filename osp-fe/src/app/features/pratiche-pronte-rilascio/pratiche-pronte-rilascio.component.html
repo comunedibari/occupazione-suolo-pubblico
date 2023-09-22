@@ -1,0 +1,35 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Pronte al rilascio</h4>
+  </div>
+  
+  <div class="p-m-3">
+    <app-table-prime-ng
+      [dataSource]="this.dataSource" 
+      [columnSchema]="this.columnSchema" 
+      [actions]="this.actions"
+      [initSortColumn]="initSortColumn" 
+      [directionSortColumn]="directionSortColumn"
+      (onEvent)="this.onTableEvent($event)"
+      [titleTable]="titleTable"
+      [exportName]="exportName"
+      [globalFilters]="globalFilters"
+      [customSort]=true
+    >
+    </app-table-prime-ng>
+  </div>
+
+  <p-dialog header="Pratica pronta al rilascio:" [(visible)]="showRilasciaAttoDialog" (onHide)="showRilasciaAttoDialog = false" styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+    <div class="p-grid p-m-1"> 
+      <div>
+          <p class="p-text-bold label">Confermi il rilascio dell'atto concessorio?</p>
+      </div>
+    </div> 
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style"
+          (click)="showRilasciaAttoDialog = false"></button>
+        <button pButton label="Conferma" class="btn-custom-style"
+          (click)="statoConcessioneValida()"></button>
+      </div>  
+    </p-footer>
+  </p-dialog>

@@ -1,0 +1,17 @@
+<div id="map" [style.height]="fullScreen ? '' : '400px'"></div>
+
+<p-dialog header="Verifica occupazione:" [(visible)]="errorDialog" (onHide)="errorDialog = false"  styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+    <div class="p-grid p-m-1">
+        <div class="p-field">
+            <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+            <label class="p-text-bold" [innerHTML]="errorMessage"></label>
+        </div>
+    </div> 
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style" (click)="errorDialog = false"></button>
+        <button *ngIf="currentPage == 'Ricerca Pratiche'" pButton label="Conferma" class="btn-custom-style" (click)="inviaVerificaOccupazione()"></button>
+        <button *ngIf="currentPage == 'Validazione pratiche'" pButton label="Conferma" class="btn-custom-style" (click)="this.closeDialog(); inviaCoordinate()"></button>
+      </div>  
+    </p-footer>
+</p-dialog>

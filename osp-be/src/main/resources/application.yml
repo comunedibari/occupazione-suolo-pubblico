@@ -1,0 +1,164 @@
+server:
+   servlet:
+      context-path: /api/${spring.application.name}
+   port: 8080
+   error:
+      include-message: always
+      include-binding-errors: always
+      include-stacktrace: ON_PARAM
+      include-exception: false
+logging:
+   file:
+      path: ./
+   level:
+      root: INFO
+      org:
+         apache:
+            fop: ERROR
+         docx4j: ERROR
+spring:
+   sql:
+      init:
+         platform: postgresql
+         encoding: UTF-8
+         mode: never
+   datasource:
+      url: ""
+      username: ""
+      password: ""
+      driverClassName: org.postgresql.Driver
+   jpa:
+      hibernate:
+         ddl-auto: none
+      properties:
+         hibernate:
+            dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
+            format_sql: true
+            show_sql: true
+            type: trace
+      show-sql: true
+   application:
+      name: osp
+   mail:
+      host: ""
+      port: 0
+      username: ""
+      password: ""
+      properties:
+         mail:
+            smtp:
+               auth: true
+               connectiontimeout: 5000
+               timeout: 5000
+               writetimeout: 5000
+               starttls:
+                  enable: true
+   quartz:
+      job-store-type: memory
+org.quartz.jobStore.class: org.quartz.simpl.RAMJobStore
+management:
+   endpoints:
+      web:
+         exposure:
+            include: health,info
+   health:
+      mail:
+         enabled: false
+springdoc:
+   api-docs:
+      enabled: true
+   show:
+      actuator: true
+pec:
+   hostname: ""
+   port: ""
+pecM1:
+   auth:
+      username: ""
+      password: ""
+pecM2:
+   auth:
+      username: ""
+      password: ""
+pecM3:
+   auth:
+      username: ""
+      password: ""
+pecM4:
+   auth:
+      username: ""
+      password: ""
+pecM5:
+   auth:
+      username: ""
+      password: ""
+osp:
+   app:
+      jwtSecret: ospSecretKey
+      jwtExpirationMs: 86400000
+      mail:
+         from: ${spring.mail.username}@gmail.com
+         send.schedule.cron.expression: 0 * * ? * *
+      format:
+         date: dd-MM-yyyy
+         time: HH:mm:ss
+         date-time: ${osp.app.format.date} ${osp.app.format.time}
+      civiliario:
+         api:
+            baseurl: ""
+            user: ""
+            pass: ""
+            timeout: 300
+         maxResult: 10
+      protocollo:
+         api:
+            mocked: true
+            baseurl: ""
+            codiceAmministrazione: ""
+      richiesta:
+         ore.min: 1
+      richiestaIntegrazione:
+         numMax: 3
+      proroga:
+         edilizia:
+            numeroMax: 2
+            giorniMax: 365
+         altro:
+            numeroMax: 2
+            giorniTotMax: 365
+      scadenzario:
+         scheduler:
+            restict: false
+            host: osp-be-scheduler
+         dateOccupazione:
+            modifica.giorni: 10
+            max.giorni: 365
+            dataInizio:
+               distanza.min.giorni: 15
+         termineProcedimentale.giorni: 60
+         termineProcedimentale.preavviso.giorni: 5
+         integrazione.giorni: 45
+         preavvisoDiniego.giorni: 10
+         pagamento.giorni: 30
+         concessioneTemporanea.scadenza.pravviso.giorni: 20
+         rettificaDate.giorni: 10
+         alertRettificaDate.giorni: 2
+      template:
+         placeholder:
+            start: +++=
+            end: +++
+      dashboard:
+         default: ""
+         m1: ""
+         m2: ""
+         m3: ""
+         m4: ""
+         m5: ""
+      senderMailMunicipio:
+         1: ""
+         2: ""
+         3: ""
+         4: ""
+         5: ""
+flagControlloAllegati: true
+maxDimAllegatiProtocolloKb: 29296.9

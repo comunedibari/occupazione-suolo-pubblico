@@ -1,0 +1,97 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Verifica ripristino luoghi</h4>
+  </div>
+
+  <div class="p-m-3">
+    <app-table-prime-ng
+      [dataSource]="this.dataSource"
+      [columnSchema]="this.columnSchema"
+      [actions]="this.actions"
+      [initSortColumn]="initSortColumn"
+      [directionSortColumn]="directionSortColumn"
+      (onEvent)="this.onTableEvent($event)"
+      [titleTable]="titleTable"
+      [exportName]="exportName"
+      [globalFilters]="globalFilters"
+      [customSort]=true
+    >
+    </app-table-prime-ng>
+  </div>
+
+  <p-dialog header="Esprimi parere:" [(visible)]="showEsprimiParereDialog" (onHide)="closeEsprimiPareriDialog()"
+  styleClass="dialog-950" [draggable]="false" [resizable]="false" [modal]="true">
+  <form [formGroup]="esprimiParereForm">
+    <div class="p-grid p-m-2">
+      <div class="p-col-12">
+        <div class="p-field">
+          <label class="p-text-bold">Nota *</label>
+          <textarea pInputTextarea [rows]="3" formControlName="nota" class="text-area-no-resize stretch"></textarea>
+        </div>
+        <div class="p-field p-mt-1 p-mb-4">
+          <label class="p-text-bold">Download template Relazione di servizio</label>
+          <button pButton icon="pi pi-download" class="btn-custom-style p-button-rounded p-ml-2" (click)="generaTemplateElaborato(getTipoTemplate())"></button>
+        </div>
+        <div class="p-field">
+          <label class="p-text-bold">Upload documento *</label>
+
+          <app-upload-file
+            [pratica]="this.pratica"
+            [mode]="uploadMode"
+            [fileClearToggle]="showEsprimiParereDialog"
+            [destinazioneAllegato]="destinazioneAllegato"
+            [idGruppoDestinatarioParere]="idGruppoDestinatarioParere"
+            [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+            (idDocUploaded)="onDocUploaded($event)"
+            (docRemoved)="onDocRemoved($event)"
+            (mandatoryDocuments)="onMandatoryDocuments($event)"
+            (onDocUploaded)="onUploadedFile($event)"
+            (fileInCheckout)="fileInCheckout($event)"
+          >
+          </app-upload-file>
+        </div>
+
+        <div class="p-fluid p-formgrid p-grid p-m-2" *ngIf="showUtentiOrdinanza()">
+          <label><b>Invia PEC ordinanza a:</b></label>
+          <ng-container *ngFor="let element of (utentiDestinatariOrdinanze$ | async)">
+            <div class="p-field p-col-4 p-pb-3 p-m-0">
+              <p-checkbox name="destinatariOrdinanza" [label]="element.ragioneSociale || element.email" [value]="element.id"
+                styleClass="checkbox-form" [formControl]="esprimiParereForm.controls['destinatariOrdinanza']"></p-checkbox>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="p-field">
+          <label for="inputParere" class="p-text-bold">Parere *</label>
+          <p-selectButton name="inputParere" [options]="parere" optionLabel="label" optionValue="value" optionDisabled="disabled"
+              formControlName="parere" styleClass="button-select-parere"></p-selectButton>
+        </div>
+
+      </div>
+    </div>
+  </form>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="closeEsprimiPareriDialog()"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="esprimiParere()" [disabled]="isConfirmDisabledControl()"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+  <div class="p-grid p-m-2"> 
+      <div class="p-col-12">
+        <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+        <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+        <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+      </div>
+  </div> 
+  <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+			    (click)="esprimiParere()"></button> 
+        <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+      </div>  
+  </p-footer>
+</p-dialog>

@@ -1,0 +1,6354 @@
+openapi: 3.0.1
+info:
+  title: OSP API
+  description: Gestionale Occupazione Suolo Pubblico Bari
+  version: '1.0'
+servers:
+  - url: http://localhost:8080/api/osp
+    description: Generated server url
+paths:
+  /user-management/user:
+    get:
+      tags:
+        - user-controller
+      operationId: getUsers
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: username
+          in: query
+          required: false
+          schema:
+            maxLength: 30
+            minLength: 3
+            type: string
+        - name: nome
+          in: query
+          required: false
+          schema:
+            maxLength: 50
+            minLength: 0
+            type: string
+        - name: cognome
+          in: query
+          required: false
+          schema:
+            maxLength: 50
+            minLength: 0
+            type: string
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageUtenteDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    put:
+      tags:
+        - user-controller
+      operationId: modificaDatiUtente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UtenteEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    post:
+      tags:
+        - user-controller
+      operationId: inserisciUtente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UtenteInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UtenteDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /user-management/user/password:
+    put:
+      tags:
+        - user-controller
+      operationId: cambiaPasswordUtente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModificaPasswordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /template-management/template:
+    get:
+      tags:
+        - template-controller
+      operationId: getTemplate
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemplateSimplifiedDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    put:
+      tags:
+        - template-controller
+      operationId: updateTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    post:
+      tags:
+        - template-controller
+      operationId: insertTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TemplateDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /richiesta-integrazione-management/richiesta-rettifica-date:
+    put:
+      tags:
+        - richiesta-integrazione-controller
+      operationId: richiestaRettificaDate
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: notaAlCittadino
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RichiestaIntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica:
+    get:
+      tags:
+        - pratica-controller
+      operationId: getPratiche
+      parameters:
+        - name: idsMunicipi
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: idsStatiPratica
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: nome
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: cognome
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: denominazioneRagSoc
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: codFiscalePIva
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: numProtocollo
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: numProvvedimento
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: richiestaVerificaRipristinoLuoghi
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: tipologiaProcesso
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: indirizzo
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagePraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    put:
+      tags:
+        - pratica-controller
+      operationId: editPratica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PraticaInsertEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    post:
+      tags:
+        - pratica-controller
+      operationId: insertPratica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PraticaInsertEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/verifica-occupazione:
+    put:
+      tags:
+        - pratica-controller
+      operationId: verificaOccupazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificaOccupazioneDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/stato-inserita:
+    put:
+      tags:
+        - pratica-controller
+      operationId: statoInserita
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/rettifica:
+    put:
+      tags:
+        - pratica-controller
+      operationId: rettificaPratica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PraticaRettificaRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/pronto-al-rilascio:
+    put:
+      tags:
+        - pratica-controller
+      operationId: prontoAlRilascio
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/presa-in-carico:
+    put:
+      tags:
+        - pratica-controller
+      operationId: presaInCarico
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtenteIstruttore
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtenteDirettore
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/inserimento-determina:
+    put:
+      tags:
+        - pratica-controller
+      operationId: inserimentoDetermina
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: codiceDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dataEmissioneDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/inserimento-determina/rigetto:
+    put:
+      tags:
+        - pratica-controller
+      operationId: inserimentoDeterminaRigetto
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: codiceDeterminaRigetto
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dataEmissioneDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/inserimento-determina/revoca:
+    put:
+      tags:
+        - pratica-controller
+      operationId: inserimentoDeterminaRevoca
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: notaAlCittadino
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: codiceDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dataEmissioneDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/inserimento-determina/decadenza:
+    put:
+      tags:
+        - pratica-controller
+      operationId: inserimentoDeterminaDecadenza
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: notaAlCittadino
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: codiceDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dataEmissioneDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/inserimento-determina/annullamento:
+    put:
+      tags:
+        - pratica-controller
+      operationId: inserimentoDeterminaAnnullamento
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: notaAlCittadino
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: codiceDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dataEmissioneDetermina
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/concessione-valida:
+    put:
+      tags:
+        - pratica-controller
+      operationId: concessioneValida
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/archiviazione:
+    put:
+      tags:
+        - pratica-controller
+      operationId: archiviazione
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/approvazione:
+    put:
+      tags:
+        - pratica-controller
+      operationId: approvazione
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/flag-esenzione-cup:
+    put:
+      tags:
+        - pratica-controller
+      operationId: editFlagEsenzioneCup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlagEsenzioneCupEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/date-occupazione:
+    put:
+      tags:
+        - pratica-controller
+      operationId: editDateOccupazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DateOccupazioneEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/aggiornamento-pagamento:
+    put:
+      tags:
+        - egov-controller
+      operationId: aggiornamentoPagamento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PraticaEgovEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/date-occupazione:
+    put:
+      tags:
+        - egov-controller
+      operationId: editDateOccupazione_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DateOccupazioneEgovEditRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /automi-protocollo-management/automi:
+    get:
+      tags:
+        - automi-protocollo-controller
+      operationId: getAllAutomiProtocolloDTO
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AutomiProtocolloDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    put:
+      tags:
+        - automi-protocollo-controller
+      operationId: updateAutoma
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomiProtocolloDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AutomiProtocolloDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /richiesta-parere-management/richiesta-parere/verifica-formale:
+    post:
+      tags:
+        - richiesta-parere-controller
+      operationId: insertRichiestaParereFromVerificaFormale
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaParereDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RichiestaParereDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /richiesta-parere-management/richiesta-parere/ulteriori-pareri:
+    post:
+      tags:
+        - richiesta-parere-controller
+      operationId: insertUlterioriRichiestePareri
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UlterioriPareriInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RichiestaParereDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /richiesta-integrazione-management/richiesta-integrazione:
+    post:
+      tags:
+        - richiesta-integrazione-controller
+      operationId: insertRichiestaIntegrazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaIntegrazioneDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RichiestaIntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/rigetto-richiesta:
+    post:
+      tags:
+        - pratica-controller
+      operationId: rigettoRichiesta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaIntegrazioneDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/check-sovrapposizione-occupazione:
+    post:
+      tags:
+        - pratica-controller
+      operationId: checkSovrapposizioneUbicazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificaOccupazioneDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /parere-management/parere:
+    post:
+      tags:
+        - parere-controller
+      operationId: insertParere
+      parameters:
+        - name: isRipristinoLuoghi
+          in: query
+          required: true
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParereInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ParereDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /notifica-scadenzario-management/inserimento:
+    post:
+      tags:
+        - notifica-scadenzario-controller
+      operationId: inserimentoNotifiche
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+  /integrazione-management/rettifica-date:
+    post:
+      tags:
+        - integrazione-controller
+      operationId: insertRettificaDate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrazioneDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /integrazione-management/integrazione:
+    post:
+      tags:
+        - integrazione-controller
+      operationId: insertIntegrazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrazioneDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/rettifica-date:
+    post:
+      tags:
+        - egov-controller
+      operationId: insertRettificaDate_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RettificaDateEgovInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/validazione-pratica:
+    post:
+      tags:
+        - egov-controller
+      operationId: validazionePratica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PraticaEgovValidazioneRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/rinuncia/inserimento-completo:
+    post:
+      tags:
+        - egov-controller
+      operationId: insertRinunciaPraticaCompleta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RinunciaEgovInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/proroga/inserimento-completo:
+    post:
+      tags:
+        - egov-controller
+      operationId: insertProrogaPraticaCompleta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProrogaEgovInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/inserimento-completo:
+    post:
+      tags:
+        - egov-controller
+      operationId: insertPraticaCompleta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PraticaEgovInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/integrazione/inserimento-completo:
+    post:
+      tags:
+        - egov-controller
+      operationId: insertIntegrazioneCompleta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrazioneCompletaEgovInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /auth/recupero-password:
+    post:
+      tags:
+        - auth-controller
+      operationId: recuperoPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecuperaPasswordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+  /auth/logout:
+    post:
+      tags:
+        - auth-controller
+      operationId: logoutUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: authenticateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoginInfoResponse'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+  /allegato-management/allegato/richiesta-integrazione:
+    get:
+      tags:
+        - allegato-controller
+      operationId: getAllegatiRichiestaIntegrazione
+      parameters:
+        - name: idRichiestaintegrazione
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllegatoSimplifiedDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    post:
+      tags:
+        - allegato-controller
+      operationId: insertAllegatoRichiestaIntegrazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllegatoRichiestaIntegrazioneRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllegatoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato/pratica:
+    post:
+      tags:
+        - allegato-controller
+      operationId: insertAllegatoPratica
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllegatoPraticaInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllegatoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato/parere:
+    get:
+      tags:
+        - allegato-controller
+      operationId: getAllegatiParere
+      parameters:
+        - name: idParere
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllegatoSimplifiedDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    post:
+      tags:
+        - allegato-controller
+      operationId: insertAllegatoParere
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllegatoParereInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllegatoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato/integrazione:
+    post:
+      tags:
+        - allegato-controller
+      operationId: insertAllegatoIntegrazione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllegatoIntegrazioneInsertRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllegatoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /user-management/user/{id}:
+    get:
+      tags:
+        - user-controller
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UtenteDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    delete:
+      tags:
+        - user-controller
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /user-management/user/gruppo:
+    get:
+      tags:
+        - user-controller
+      operationId: getUsersGruppo
+      parameters:
+        - name: idGruppo
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UtenteDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /user-management/user/gruppo-municipio:
+    get:
+      tags:
+        - user-controller
+      operationId: getUsersGruppoMunicipio
+      parameters:
+        - name: idGruppo
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: idMunicipio
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UtenteDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipologie-titoli-edilizi:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipologieTitoliEdilizi
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalFlagTestoLiberoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-template:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiTemplate
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-ruoli-richiedenti:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiRuoliRichiedenti
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-processi:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiProcessi
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-notifiche-scadenzario:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiNotificheScadenzario
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-manufatti:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiManufatti
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalFlagTestoLiberoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-documenti-allegati:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiDocumentiAllegati
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-attivita-da-svolgere:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiAttivitaDaSvolgere
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalFlagTestoLiberoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-allegati:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiAllegati
+      parameters:
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoAllegatoGruppoStatoProcessoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-allegati/all:
+    get:
+      tags:
+        - typological-controller
+      operationId: getAllTipiAllegati
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoAllegatoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/tipi-allegati-stato-processo:
+    get:
+      tags:
+        - typological-controller
+      operationId: getTipiAllegatiByStatoAndProcesso
+      parameters:
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idStatoPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: idTipoProcesso
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TipoAllegatoGruppoStatoProcessoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/stati-pratiche:
+    get:
+      tags:
+        - typological-controller
+      operationId: getStatiPratiche
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/municipi:
+    get:
+      tags:
+        - typological-controller
+      operationId: getMunicipi
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypologicalDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /tipologiche/gruppi:
+    get:
+      tags:
+        - typological-controller
+      operationId: getGruppi
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GruppoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /template-management/template/{id}:
+    get:
+      tags:
+        - template-controller
+      operationId: getTemplate_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TemplateDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /template-management/template/tipo:
+    get:
+      tags:
+        - template-controller
+      operationId: getTemplateByTipo
+      parameters:
+        - name: idTipoTemplate
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TemplateDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /template-management/template/elaborato:
+    get:
+      tags:
+        - template-controller
+      operationId: getTemplateElaborato
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idTipoTemplate
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: notaParere
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TemplateDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /stats/caricaDashboardKibana:
+    get:
+      tags:
+        - statistiche-controller
+      operationId: getTemplate_2
+      parameters:
+        - name: municipio
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DashboardDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /stats/caricaDashboardKibana/{municipio}:
+    get:
+      tags:
+        - statistiche-controller
+      operationId: getTemplate_3
+      parameters:
+        - name: municipio
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DashboardDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/{id}:
+    get:
+      tags:
+        - pratica-controller
+      operationId: getPratica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    delete:
+      tags:
+        - pratica-controller
+      operationId: deletePratica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/storico:
+    get:
+      tags:
+        - pratica-controller
+      operationId: getStoricoPratica
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagePraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/rinuncia/pratica-precompilata/{idPratica}:
+    get:
+      tags:
+        - pratica-controller
+      operationId: rinunciaPraticaPrecompilata
+      parameters:
+        - name: idPratica
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/proroga/verifiche-apertura/{idPratica}:
+    get:
+      tags:
+        - pratica-controller
+      operationId: prorogaVerificheApertura
+      parameters:
+        - name: idPratica
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/proroga/pratica-precompilata/{idPratica}:
+    get:
+      tags:
+        - pratica-controller
+      operationId: prorogaPraticaPrecompilata
+      parameters:
+        - name: idPratica
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /pratica-management/pratica/count:
+    get:
+      tags:
+        - pratica-controller
+      operationId: getCountPratiche
+      parameters:
+        - name: idsStatiPratica
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: idsMunicipi
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: integer
+                format: int64
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /parere-management/parere/{id}:
+    get:
+      tags:
+        - parere-controller
+      operationId: getParere
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ParereDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /notifica-scadenzario-management/notifica-scadenzario:
+    get:
+      tags:
+        - notifica-scadenzario-controller
+      operationId: getNotificheScadenzario
+      parameters:
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificaScadenzarioDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /notifica-scadenzario-management/notifica-scadenzario/count:
+    get:
+      tags:
+        - notifica-scadenzario-controller
+      operationId: countNotificheScadenzario
+      parameters:
+        - name: idUtente
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: integer
+                format: int64
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /integrazione-management/integrazione/{id}:
+    get:
+      tags:
+        - integrazione-controller
+      operationId: getIntegrazione
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IntegrazioneDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica:
+    get:
+      tags:
+        - egov-controller
+      operationId: getPratiche_1
+      parameters:
+        - name: codiceFiscale
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: codiceProtocollo
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: idPratica
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PraticaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/{idPratica}/determina:
+    get:
+      tags:
+        - egov-controller
+      operationId: getDetermina
+      parameters:
+        - name: idPratica
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DeterminaDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/rettificabili:
+    get:
+      tags:
+        - egov-controller
+      operationId: getPraticheRettificabili
+      parameters:
+        - name: codiceFiscalePartitaIva
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/rettifica-date:
+    get:
+      tags:
+        - egov-controller
+      operationId: getPraticheRettificaDate
+      parameters:
+        - name: codiceFiscalePiva
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/avviabili-post-concessione:
+    get:
+      tags:
+        - egov-controller
+      operationId: getPraticheAvviabiliPostConcessione
+      parameters:
+        - name: codiceFiscalePartitaIva
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idTipoProcesso
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /egov-management/pratica/attesa-pagamento:
+    get:
+      tags:
+        - egov-controller
+      operationId: getPraticheAttesaPagamentoBollo
+      parameters:
+        - name: codiceFiscalePiva
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /civiliario/data-singolo-municipio:
+    get:
+      tags:
+        - civiliario-controller
+      operationId: dataSingoloMunicipio
+      parameters:
+        - name: indirizzo
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: numero
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: idMunicipio
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DataSingoloMunicipioResponse'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /automi-protocollo-management/automi/{automaId}:
+    get:
+      tags:
+        - automi-protocollo-controller
+      operationId: getAutomaProtocolloDTOByUoid
+      parameters:
+        - name: automaId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AutomiProtocolloDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /automi-protocollo-management/automi/municipio/{municipioId}:
+    get:
+      tags:
+        - automi-protocollo-controller
+      operationId: getAutomaProtocolloDTOByIdMunicipio
+      parameters:
+        - name: municipioId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AutomiProtocolloDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato:
+    get:
+      tags:
+        - allegato-controller
+      operationId: getAllegati
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: idStatoPratica
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: idTipoProcesso
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllegatoSimplifiedDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato/{id}:
+    get:
+      tags:
+        - allegato-controller
+      operationId: getAllegato
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AllegatoDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+    delete:
+      tags:
+        - allegato-controller
+      operationId: deleteAllegato
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato/richiesta-parere:
+    get:
+      tags:
+        - allegato-controller
+      operationId: getAllegatiRichiestaParere
+      parameters:
+        - name: idRichiestaParere
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllegatoSimplifiedDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+  /allegato-management/allegato/documentale-pratica:
+    get:
+      tags:
+        - allegato-controller
+      operationId: getAllegatiDocumentalePratica
+      parameters:
+        - name: idPratica
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllegatoSimplifiedDTO'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+        - jwt: []
+components:
+  schemas:
+    UtenteEditRequest:
+      required:
+        - codiceFiscale
+        - email
+        - enabled
+        - id
+        - idGruppo
+        - username
+      type: object
+      properties:
+        username:
+          maxLength: 30
+          minLength: 3
+          type: string
+        email:
+          maxLength: 50
+          minLength: 0
+          type: string
+        idGruppo:
+          type: integer
+          format: int32
+        idsMunicipi:
+          type: array
+          items:
+            type: integer
+            format: int32
+        nome:
+          type: string
+        cognome:
+          type: string
+        sesso:
+          type: string
+          enum:
+            - M
+            - F
+        dataDiNascita:
+          type: string
+          format: date
+        luogoDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        provinciaDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        codiceFiscale:
+          maxLength: 16
+          minLength: 11
+          type: string
+        ragioneSociale:
+          maxLength: 100
+          minLength: 0
+          type: string
+        numTel:
+          maxLength: 15
+          minLength: 0
+          type: string
+        uoId:
+          maxLength: 255
+          minLength: 0
+          type: string
+        indirizzo:
+          maxLength: 255
+          minLength: 0
+          type: string
+        skipCheckConcessionario:
+          pattern: ^$|^true$|^false$
+          type: string
+        id:
+          type: integer
+          format: int64
+        enabled:
+          type: boolean
+    ModificaPasswordRequest:
+      required:
+        - oldPassword
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        oldPassword:
+          maxLength: 40
+          minLength: 0
+          type: string
+        password:
+          maxLength: 40
+          minLength: 6
+          type: string
+    TemplateDTO:
+      required:
+        - fileTemplate
+        - mimeType
+        - nomeFile
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        tipoTemplate:
+          $ref: '#/components/schemas/TypologicalDTO'
+        nomeFile:
+          maxLength: 255
+          minLength: 0
+          type: string
+        mimeType:
+          maxLength: 255
+          minLength: 0
+          type: string
+        dataInserimento:
+          type: string
+          format: date-time
+        dataModifica:
+          type: string
+          format: date-time
+        utenteModifica:
+          $ref: '#/components/schemas/UtenteDTO'
+        fileTemplate:
+          type: string
+    TypologicalDTO:
+      required:
+        - descrizione
+        - descrizioneEstesa
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        descrizione:
+          type: string
+        descrizioneEstesa:
+          type: string
+    UtenteDTO:
+      required:
+        - codiceFiscale
+        - dateCreated
+        - email
+        - idGruppo
+        - username
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idGruppo:
+          type: integer
+          format: int32
+        idsMunicipi:
+          uniqueItems: true
+          type: array
+          items:
+            type: integer
+            format: int32
+        username:
+          maxLength: 30
+          minLength: 3
+          type: string
+        nome:
+          maxLength: 50
+          minLength: 0
+          type: string
+        cognome:
+          maxLength: 50
+          minLength: 0
+          type: string
+        sesso:
+          type: string
+          enum:
+            - M
+            - F
+        dataDiNascita:
+          type: string
+          format: date
+        luogoDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        provinciaDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        codiceFiscale:
+          maxLength: 16
+          minLength: 11
+          type: string
+        ragioneSociale:
+          maxLength: 50
+          minLength: 0
+          type: string
+        email:
+          maxLength: 50
+          minLength: 0
+          type: string
+        numTel:
+          maxLength: 15
+          minLength: 0
+          type: string
+        enabled:
+          type: boolean
+        dateCreated:
+          type: string
+          format: date-time
+        lastLogin:
+          type: string
+          format: date-time
+        flagEliminato:
+          type: boolean
+        dataEliminazione:
+          type: string
+          format: date-time
+        uoId:
+          maxLength: 255
+          minLength: 0
+          type: string
+        indirizzo:
+          maxLength: 255
+          minLength: 0
+          type: string
+    IntegrazioneDTO:
+      required:
+        - idRichiestaIntegrazione
+        - idUtenteIntegrazione
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idRichiestaIntegrazione:
+          type: integer
+          format: int64
+        idUtenteIntegrazione:
+          type: integer
+          format: int64
+        motivoIntegrazione:
+          maxLength: 512
+          minLength: 0
+          type: string
+        codiceProtocollo:
+          type: string
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        dataInserimento:
+          type: string
+          format: date-time
+        dataInizioOccupazione:
+          type: string
+          format: date
+        oraInizioOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        dataScadenzaOccupazione:
+          type: string
+          format: date
+        oraScadenzaOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        statoPratica:
+          $ref: '#/components/schemas/TypologicalDTO'
+        originEgov:
+          type: boolean
+    LocalTime:
+      type: object
+      properties:
+        hour:
+          type: integer
+          format: int32
+        minute:
+          type: integer
+          format: int32
+        second:
+          type: integer
+          format: int32
+        nano:
+          type: integer
+          format: int32
+    RichiestaIntegrazioneDTO:
+      required:
+        - idPratica
+        - idUtenteRichiedente
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPratica:
+          type: integer
+          format: int64
+        idUtenteRichiedente:
+          type: integer
+          format: int64
+        idStatoPratica:
+          type: integer
+          format: int32
+        codiceProtocollo:
+          maxLength: 100
+          minLength: 0
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        tipoRichiesta:
+          type: string
+          enum:
+            - PROCEDURA_DINIEGO
+            - RETTIFICA_DATE
+        motivoRichiesta:
+          maxLength: 512
+          minLength: 0
+          type: string
+        dataInserimento:
+          type: string
+          format: date-time
+        dataScadenza:
+          type: string
+          format: date-time
+        integrazione:
+          $ref: '#/components/schemas/IntegrazioneDTO'
+        flagEsenzioneMarcaDaBollo:
+          type: string
+        idAllegato:
+          type: integer
+          format: int64
+    DatiRichiestaDTO:
+      required:
+        - dataInizioOccupazione
+        - dataScadenzaOccupazione
+        - flagAccettazioneRegSuoloPubblico
+        - flagConoscenzaTassaOccupazione
+        - flagNonModificheRispettoConcessione
+        - flagNumeroCivicoAssente
+        - flagObbligoRiparazioneDanni
+        - flagRispettoDisposizioniRegolamento
+        - flagRispettoInteresseTerzi
+        - idAttivitaDaSvolgere
+        - larghezzaM
+        - lunghezzaM
+        - superficieAreaMq
+        - superficieMarciapiedeMq
+        - ubicazioneOccupazione
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        flagEsenzioneMarcaDaBollo:
+          type: boolean
+        flagEsenzioneMarcaDaBolloModificato:
+          type: boolean
+        motivazioneEsenzioneMarcaBollo:
+          type: string
+        ubicazioneOccupazione:
+          maxLength: 300
+          minLength: 0
+          type: string
+        idMunicipio:
+          type: integer
+          format: int32
+        localita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        flagNumeroCivicoAssente:
+          type: boolean
+        noteUbicazione:
+          type: string
+        superficieAreaMq:
+          type: number
+          format: double
+        larghezzaM:
+          type: number
+          format: double
+        lunghezzaM:
+          type: number
+          format: double
+        superficieMarciapiedeMq:
+          type: number
+          format: double
+        larghezzaMarciapiedeM:
+          type: number
+          format: double
+        lunghezzaMarciapiedeM:
+          type: number
+          format: double
+        larghezzaCarreggiataM:
+          type: number
+          format: double
+        lunghezzaCarreggiataM:
+          type: number
+          format: double
+        stalloDiSosta:
+          type: boolean
+        presScivoliDiversamenteAbili:
+          type: boolean
+        presPassiCarrabiliDiversamenteAbili:
+          type: boolean
+        dataInizioOccupazione:
+          type: string
+          format: date
+        oraInizioOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        dataScadenzaOccupazione:
+          type: string
+          format: date
+        oraScadenzaOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        idAttivitaDaSvolgere:
+          type: integer
+          format: int32
+        idTipologiaTitoloEdilizio:
+          type: integer
+          format: int32
+        descrizioneTitoloEdilizio:
+          maxLength: 100
+          minLength: 0
+          type: string
+        riferimentoTitoloEdilizio:
+          maxLength: 100
+          minLength: 0
+          type: string
+        descrizioneAttivitaDaSvolgere:
+          maxLength: 255
+          minLength: 0
+          type: string
+        idManufatto:
+          type: integer
+          format: int32
+        descrizioneManufatto:
+          maxLength: 255
+          minLength: 0
+          type: string
+        flagAccettazioneRegSuoloPubblico:
+          type: boolean
+        flagRispettoInteresseTerzi:
+          type: boolean
+        flagObbligoRiparazioneDanni:
+          type: boolean
+        flagRispettoDisposizioniRegolamento:
+          type: boolean
+        flagConoscenzaTassaOccupazione:
+          type: boolean
+        flagNonModificheRispettoConcessione:
+          type: boolean
+        coordUbicazioneTemporanea:
+          $ref: '#/components/schemas/GeoMultiPointDTO'
+        coordUbicazioneDefinitiva:
+          $ref: '#/components/schemas/GeoMultiPointDTO'
+        tipoOperazioneVerificaOccupazione:
+          type: string
+          enum:
+            - VERIFICA_OCCUPAZIONE
+            - SALTA_VERIFICA_OCCUPAZIONE
+            - OCCUPAZIONE_CORRETTA
+        nome_via:
+          maxLength: 255
+          minLength: 0
+          type: string
+        numero:
+          maxLength: 5
+          minLength: 0
+          type: string
+        cod_via:
+          maxLength: 20
+          minLength: 0
+          type: string
+    GeoMultiPointDTO:
+      required:
+        - points
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoPointDTO'
+    GeoPointDTO:
+      type: object
+      properties:
+        lon:
+          type: number
+          format: double
+        lat:
+          type: number
+          format: double
+    MarcaBolloPraticaDTO:
+      required:
+        - causalePagamento
+        - dataOperazione
+        - idRichiesta
+        - importoPagato
+        - improntaFile
+        - iuv
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        iuv:
+          type: string
+        improntaFile:
+          type: string
+        importoPagato:
+          type: number
+          format: double
+        causalePagamento:
+          type: string
+        idRichiesta:
+          type: string
+        dataOperazione:
+          type: string
+          format: date
+    PraticaInsertEditRequest:
+      required:
+        - datiRichiesta
+        - firmatario
+        - idMunicipio
+        - idTipoProcesso
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPraticaOriginaria:
+          type: integer
+          format: int64
+        idUtente:
+          type: integer
+          format: int64
+        idMunicipio:
+          type: integer
+          format: int32
+        motivazioneRichiesta:
+          type: string
+        firmatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        destinatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaDTO'
+        idTipoProcesso:
+          type: integer
+          format: int32
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+        marcaBolloPratica:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+        marcaBolloDetermina:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+    RichiedenteDTO:
+      required:
+        - flagDestinatario
+        - flagFirmatario
+        - idTipoRuoloRichiedente
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idTipoRuoloRichiedente:
+          type: integer
+          format: int32
+        nome:
+          maxLength: 50
+          minLength: 0
+          type: string
+        cognome:
+          maxLength: 50
+          minLength: 0
+          type: string
+        denominazione:
+          maxLength: 50
+          minLength: 0
+          type: string
+        codiceFiscalePartitaIva:
+          maxLength: 16
+          minLength: 0
+          type: string
+        dataDiNascita:
+          type: string
+          format: date
+        comuneDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        provinciaDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        nazionalita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        citta:
+          maxLength: 50
+          minLength: 0
+          type: string
+        indirizzo:
+          maxLength: 100
+          minLength: 0
+          type: string
+        civico:
+          maxLength: 10
+          minLength: 0
+          type: string
+        provincia:
+          maxLength: 50
+          minLength: 0
+          type: string
+        cap:
+          maxLength: 5
+          minLength: 0
+          type: string
+        recapitoTelefonico:
+          maxLength: 15
+          minLength: 0
+          type: string
+        email:
+          maxLength: 50
+          minLength: 0
+          type: string
+        idTipoDocumentoAllegato:
+          type: integer
+          format: int32
+        numeroDocumentoAllegato:
+          maxLength: 50
+          minLength: 0
+          type: string
+        amministrazioneDocumentoAllegato:
+          maxLength: 50
+          minLength: 0
+          type: string
+        qualitaRuolo:
+          maxLength: 50
+          minLength: 0
+          type: string
+        descrizioneRuolo:
+          maxLength: 50
+          minLength: 0
+          type: string
+        flagFirmatario:
+          type: boolean
+        flagDestinatario:
+          type: boolean
+    VerificaOccupazioneDTO:
+      required:
+        - idPratica
+        - idUtente
+        - tipoOperazione
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        idUtente:
+          type: integer
+          format: int64
+        tipoOperazione:
+          type: string
+          enum:
+            - VERIFICA_OCCUPAZIONE
+            - SALTA_VERIFICA_OCCUPAZIONE
+            - OCCUPAZIONE_CORRETTA
+        coordUbicazioneDefinitiva:
+          $ref: '#/components/schemas/GeoMultiPointDTO'
+        skipCheck:
+          type: boolean
+    ParereDTO:
+      required:
+        - idRichiestaParere
+        - idUtenteParere
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idRichiestaParere:
+          type: integer
+          format: int64
+        idUtenteParere:
+          type: integer
+          format: int64
+        nota:
+          maxLength: 255
+          minLength: 0
+          type: string
+        esito:
+          type: boolean
+        codiceProtocollo:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        dataInserimento:
+          type: string
+          format: date-time
+        flagCompetenza:
+          type: boolean
+    PraticaDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPraticaOriginaria:
+          type: integer
+          format: int64
+        idProrogaPrecedente:
+          type: integer
+          format: int64
+        motivazioneRichiesta:
+          type: string
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaDTO'
+        firmatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        destinatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        municipio:
+          $ref: '#/components/schemas/TypologicalDTO'
+        utentePresaInCarico:
+          $ref: '#/components/schemas/UtenteDTO'
+        utenteCreazione:
+          $ref: '#/components/schemas/UtenteDTO'
+        utenteModifica:
+          $ref: '#/components/schemas/UtenteDTO'
+        utenteAssegnatario:
+          $ref: '#/components/schemas/UtenteDTO'
+        dataCreazione:
+          type: string
+          format: date-time
+        dataInserimento:
+          type: string
+          format: date-time
+        dataModifica:
+          type: string
+          format: date-time
+        tipoProcesso:
+          $ref: '#/components/schemas/TypologicalDTO'
+        statoPratica:
+          $ref: '#/components/schemas/TypologicalDTO'
+        infoPassaggioStato:
+          type: string
+        flagVerificaFormale:
+          type: boolean
+        flagProceduraDiniego:
+          type: boolean
+        protocolli:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtocolloDTO'
+        codiceDetermina:
+          type: string
+        dataEmissioneDetermina:
+          type: string
+          format: date
+        codiceDeterminaRinuncia:
+          type: string
+        dataEmissioneDeterminaRinuncia:
+          type: string
+          format: date
+        notaAlCittadinoRda:
+          type: string
+        codiceDeterminaRda:
+          type: string
+        dataEmissioneDeterminaRda:
+          type: string
+          format: date
+        dataScadenzaPratica:
+          type: string
+          format: date-time
+        dataScadenzaRigetto:
+          type: string
+          format: date-time
+        dataScadenzaPreavvisoDiniego:
+          type: string
+          format: date-time
+        dataScadenzaPagamento:
+          type: string
+          format: date-time
+        contatoreRichiesteIntegrazioni:
+          type: integer
+          format: int32
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        marcaBolloPratica:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+        flagEsenzionePagamentoCUP:
+          type: boolean
+        motivazioneEsenzionePagamentoCup:
+          type: string
+        codiceProtocollo:
+          type: string
+        richiestePareri:
+          type: array
+          items:
+            $ref: '#/components/schemas/RichiestaParereDTO'
+        richiesteIntegrazioni:
+          type: array
+          items:
+            $ref: '#/components/schemas/RichiestaIntegrazioneDTO'
+    ProtocolloDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPratica:
+          type: integer
+          format: int64
+        idStatoPratica:
+          type: integer
+          format: int32
+        codiceProtocollo:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        tipoOperazione:
+          type: string
+          enum:
+            - PREAVVISO_DINIEGO_RICHIESTA_RETTIFICA_DATE
+            - RETTIFICA_ERRORI_MATERIALI
+        codiceDeterminaRettifica:
+          type: string
+        dataEmissioneDeterminaRettifica:
+          type: string
+          format: date
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+    RichiestaParereDTO:
+      required:
+        - idPratica
+        - idUtenteRichiedente
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPratica:
+          type: integer
+          format: int64
+        idUtenteRichiedente:
+          type: integer
+          format: int64
+        idStatoPratica:
+          type: integer
+          format: int32
+        idGruppoDestinatarioParere:
+          type: integer
+          format: int32
+        codiceProtocollo:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        notaRichiestaParere:
+          maxLength: 512
+          minLength: 0
+          type: string
+        dataInserimento:
+          type: string
+          format: date-time
+        flagInseritaRisposta:
+          type: boolean
+        parere:
+          $ref: '#/components/schemas/ParereDTO'
+        riabilitaEsenzioneMarcaDaBollo:
+          type: boolean
+    DatiRichiestaRettificaDTO:
+      type: object
+      properties:
+        noteUbicazione:
+          type: string
+        superficieAreaMq:
+          type: number
+          format: double
+        larghezzaM:
+          type: number
+          format: double
+        lunghezzaM:
+          type: number
+          format: double
+        superficieMarciapiedeMq:
+          type: number
+          format: double
+        larghezzaMarciapiedeM:
+          type: number
+          format: double
+        lunghezzaMarciapiedeM:
+          type: number
+          format: double
+        larghezzaCarreggiataM:
+          type: number
+          format: double
+        lunghezzaCarreggiataM:
+          type: number
+          format: double
+        stalloDiSosta:
+          type: boolean
+        presScivoliDiversamenteAbili:
+          type: boolean
+        presPassiCarrabiliDiversamenteAbili:
+          type: boolean
+        idTipologiaTitoloEdilizio:
+          type: integer
+          format: int32
+        descrizioneTitoloEdilizio:
+          maxLength: 100
+          minLength: 0
+          type: string
+        riferimentoTitoloEdilizio:
+          maxLength: 100
+          minLength: 0
+          type: string
+        descrizioneAttivitaDaSvolgere:
+          maxLength: 255
+          minLength: 0
+          type: string
+        idManufatto:
+          type: integer
+          format: int32
+        descrizioneManufatto:
+          maxLength: 255
+          minLength: 0
+          type: string
+        flagEsenzioneMarcaDaBollo:
+          type: boolean
+        motivazioneEsenzioneMarcaBollo:
+          type: string
+    PraticaRettificaRequest:
+      required:
+        - datiRichiesta
+        - firmatario
+        - id
+        - idUtente
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idUtente:
+          type: integer
+          format: int64
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaRettificaDTO'
+        firmatario:
+          $ref: '#/components/schemas/RichiedenteRettificaDTO'
+        destinatario:
+          $ref: '#/components/schemas/RichiedenteRettificaDTO'
+        codiceDeterminaRettifica:
+          type: string
+        dataEmissioneDeterminaRettifica:
+          type: string
+          format: date
+    RichiedenteRettificaDTO:
+      type: object
+      properties:
+        nome:
+          maxLength: 50
+          minLength: 0
+          type: string
+        cognome:
+          maxLength: 50
+          minLength: 0
+          type: string
+        denominazione:
+          maxLength: 50
+          minLength: 0
+          type: string
+        codiceFiscalePartitaIva:
+          maxLength: 16
+          minLength: 0
+          type: string
+        dataDiNascita:
+          type: string
+          format: date
+        comuneDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        provinciaDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        nazionalita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        citta:
+          maxLength: 50
+          minLength: 0
+          type: string
+        indirizzo:
+          maxLength: 100
+          minLength: 0
+          type: string
+        civico:
+          maxLength: 10
+          minLength: 0
+          type: string
+        provincia:
+          maxLength: 50
+          minLength: 0
+          type: string
+        cap:
+          maxLength: 5
+          minLength: 0
+          type: string
+        recapitoTelefonico:
+          maxLength: 15
+          minLength: 0
+          type: string
+        email:
+          maxLength: 50
+          minLength: 0
+          type: string
+        idTipoDocumentoAllegato:
+          type: integer
+          format: int32
+        numeroDocumentoAllegato:
+          maxLength: 50
+          minLength: 0
+          type: string
+        amministrazioneDocumentoAllegato:
+          maxLength: 50
+          minLength: 0
+          type: string
+    FlagEsenzioneCupEditRequest:
+      required:
+        - flagEsenzionePagamentoCUP
+        - idPratica
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        motivazioneEsenzionePagamentoCup:
+          type: string
+        flagEsenzionePagamentoCUP:
+          type: string
+    DateOccupazioneEditRequest:
+      required:
+        - dataInizioOccupazione
+        - dataScadenzaOccupazione
+        - idPratica
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        dataInizioOccupazione:
+          type: string
+          format: date
+        oraInizioOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        dataScadenzaOccupazione:
+          type: string
+          format: date
+        oraScadenzaOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+    AllegatoDTO:
+      required:
+        - fileAllegato
+        - mimeType
+        - nomeFile
+        - tipoAllegato
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPratica:
+          type: integer
+          format: int64
+        idParere:
+          type: integer
+          format: int64
+        idIntegrazione:
+          type: integer
+          format: int64
+        idRichiestaParere:
+          type: integer
+          format: int64
+        idRichiestaIntegrazione:
+          type: integer
+          format: int64
+        tipoAllegato:
+          $ref: '#/components/schemas/TipoAllegatoDTO'
+        dataInserimento:
+          type: string
+          format: date-time
+        nota:
+          type: string
+        nomeFile:
+          type: string
+        mimeType:
+          type: string
+        revisione:
+          type: integer
+          format: int32
+        codiceProtocollo:
+          type: string
+        fileAllegato:
+          type: string
+    PraticaEgovEditRequest:
+      required:
+        - allegati
+        - pratica
+      type: object
+      properties:
+        pratica:
+          $ref: '#/components/schemas/PraticaEgovInsertEditRequest'
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoDTO'
+    PraticaEgovInsertEditRequest:
+      required:
+        - anno
+        - dataProtocollo
+        - datiRichiesta
+        - firmatario
+        - idMunicipio
+        - idTipoProcesso
+        - numeroProtocollo
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPraticaOriginaria:
+          type: integer
+          format: int64
+        idUtente:
+          type: integer
+          format: int64
+        idMunicipio:
+          type: integer
+          format: int32
+        motivazioneRichiesta:
+          type: string
+        firmatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        destinatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaDTO'
+        idTipoProcesso:
+          type: integer
+          format: int32
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+        marcaBolloPratica:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+        marcaBolloDetermina:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+    TipoAllegatoDTO:
+      required:
+        - descrizione
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        descrizione:
+          type: string
+        descrizioneEstesa:
+          type: string
+    DateOccupazioneEgovEditRequest:
+      required:
+        - dataInizioOccupazione
+        - dataScadenzaOccupazione
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        numeroProtocollo:
+          type: string
+        dataInizioOccupazione:
+          type: string
+          format: date
+        oraInizioOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        dataScadenzaOccupazione:
+          type: string
+          format: date
+        oraScadenzaOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+    AutomiProtocolloDTO:
+      required:
+        - label
+        - uoId
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uoId:
+          type: string
+        municipio:
+          $ref: '#/components/schemas/TypologicalDTO'
+        label:
+          type: string
+        denominazione:
+          type: string
+        dataInserimento:
+          type: string
+          format: date-time
+        dataModifica:
+          type: string
+          format: date-time
+    UtenteInsertRequest:
+      required:
+        - codiceFiscale
+        - email
+        - idGruppo
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          maxLength: 30
+          minLength: 3
+          type: string
+        email:
+          maxLength: 50
+          minLength: 0
+          type: string
+        idGruppo:
+          type: integer
+          format: int32
+        idsMunicipi:
+          type: array
+          items:
+            type: integer
+            format: int32
+        nome:
+          type: string
+        cognome:
+          type: string
+        sesso:
+          type: string
+          enum:
+            - M
+            - F
+        dataDiNascita:
+          type: string
+          format: date
+        luogoDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        provinciaDiNascita:
+          maxLength: 50
+          minLength: 0
+          type: string
+        codiceFiscale:
+          maxLength: 16
+          minLength: 11
+          type: string
+        ragioneSociale:
+          maxLength: 100
+          minLength: 0
+          type: string
+        numTel:
+          maxLength: 15
+          minLength: 0
+          type: string
+        uoId:
+          maxLength: 255
+          minLength: 0
+          type: string
+        indirizzo:
+          maxLength: 255
+          minLength: 0
+          type: string
+        skipCheckConcessionario:
+          pattern: ^$|^true$|^false$
+          type: string
+        password:
+          type: string
+    UlterioriPareriInsertRequest:
+      required:
+        - idGruppiDestinatariPareri
+        - idPratica
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        idGruppiDestinatariPareri:
+          type: array
+          items:
+            type: integer
+            format: int32
+    ParereInsertRequest:
+      required:
+        - parere
+      type: object
+      properties:
+        parere:
+          $ref: '#/components/schemas/ParereDTO'
+        listaIdUtentiEmail:
+          type: array
+          items:
+            type: integer
+            format: int64
+        flagPec:
+          type: boolean
+    RettificaDateEgovInsertRequest:
+      required:
+        - anno
+        - dataInizioOccupazione
+        - dataProtocollo
+        - dataScadenzaOccupazione
+        - idPratica
+        - numeroProtocollo
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        dataInizioOccupazione:
+          type: string
+          format: date
+        oraInizioOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        dataScadenzaOccupazione:
+          type: string
+          format: date
+        oraScadenzaOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+    PraticaEgovValidazioneRequest:
+      type: object
+      properties:
+        pratica:
+          $ref: '#/components/schemas/PraticaInsertEditRequest'
+        dimensioneTotaleAllegatiProtocolloKb:
+          type: string
+    DatiRichiestaRinunciaEgovRequest:
+      required:
+        - flagAccettazioneRegSuoloPubblico
+        - flagConoscenzaTassaOccupazione
+        - flagObbligoRiparazioneDanni
+        - flagRispettoDisposizioniRegolamento
+        - flagRispettoInteresseTerzi
+      type: object
+      properties:
+        flagAccettazioneRegSuoloPubblico:
+          type: boolean
+        flagRispettoInteresseTerzi:
+          type: boolean
+        flagObbligoRiparazioneDanni:
+          type: boolean
+        flagRispettoDisposizioniRegolamento:
+          type: boolean
+        flagConoscenzaTassaOccupazione:
+          type: boolean
+    PraticaRinunciaEgovInsertEditRequest:
+      required:
+        - anno
+        - dataProtocollo
+        - datiRichiesta
+        - idPraticaOriginaria
+        - motivazioneRichiesta
+        - numeroProtocollo
+      type: object
+      properties:
+        idPraticaOriginaria:
+          type: integer
+          format: int64
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        motivazioneRichiesta:
+          type: string
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaRinunciaEgovRequest'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+    RinunciaEgovInsertRequest:
+      required:
+        - allegati
+        - pratica
+      type: object
+      properties:
+        pratica:
+          $ref: '#/components/schemas/PraticaRinunciaEgovInsertEditRequest'
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoDTO'
+    DatiRichiestaProrogaEgovRequest:
+      required:
+        - dataInizioOccupazione
+        - dataScadenzaOccupazione
+        - flagAccettazioneRegSuoloPubblico
+        - flagConoscenzaTassaOccupazione
+        - flagNonModificheRispettoConcessione
+        - flagObbligoRiparazioneDanni
+        - flagRispettoDisposizioniRegolamento
+        - flagRispettoInteresseTerzi
+      type: object
+      properties:
+        dataInizioOccupazione:
+          type: string
+          format: date
+        oraInizioOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        dataScadenzaOccupazione:
+          type: string
+          format: date
+        oraScadenzaOccupazione:
+          $ref: '#/components/schemas/LocalTime'
+        flagAccettazioneRegSuoloPubblico:
+          type: boolean
+        flagRispettoInteresseTerzi:
+          type: boolean
+        flagObbligoRiparazioneDanni:
+          type: boolean
+        flagRispettoDisposizioniRegolamento:
+          type: boolean
+        flagConoscenzaTassaOccupazione:
+          type: boolean
+        flagNonModificheRispettoConcessione:
+          type: boolean
+        flagEsenzioneMarcaDaBollo:
+          type: boolean
+        motivazioneEsenzioneMarcaBollo:
+          type: string
+    PraticaProrogaEgovInsertEditRequest:
+      required:
+        - anno
+        - dataProtocollo
+        - datiRichiesta
+        - firmatario
+        - idMunicipio
+        - idPraticaOriginaria
+        - idProrogaPrecedente
+        - numeroProtocollo
+      type: object
+      properties:
+        idPraticaOriginaria:
+          type: integer
+          format: int64
+        idProrogaPrecedente:
+          type: integer
+          format: int64
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        idMunicipio:
+          type: integer
+          format: int32
+        firmatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaProrogaEgovRequest'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        originEgov:
+          type: boolean
+        marcaBolloPratica:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+    ProrogaEgovInsertRequest:
+      required:
+        - allegati
+        - pratica
+      type: object
+      properties:
+        pratica:
+          $ref: '#/components/schemas/PraticaProrogaEgovInsertEditRequest'
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoDTO'
+    PraticaEgovInsertRequest:
+      required:
+        - allegati
+        - pratica
+      type: object
+      properties:
+        pratica:
+          $ref: '#/components/schemas/PraticaEgovInsertEditRequest'
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoDTO'
+    IntegrazioneCompletaEgovInsertRequest:
+      required:
+        - allegati
+        - anno
+        - dataProtocollo
+        - idPratica
+        - numeroProtocollo
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        numeroProtocollo:
+          type: string
+        anno:
+          type: string
+        dataProtocollo:
+          type: string
+          format: date-time
+        motivoIntegrazione:
+          maxLength: 512
+          minLength: 0
+          type: string
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoDTO'
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+    RecuperaPasswordRequest:
+      required:
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+    LogoutRequest:
+      required:
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+    LoginRequest:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AuthDTO:
+      type: object
+      properties:
+        gestInvioMailDetermina:
+          type: boolean
+        gestRichiestaParere:
+          type: boolean
+        inserisciRichiesta:
+          type: boolean
+        concessioniValide:
+          type: boolean
+        fascicolo:
+          type: boolean
+        praticaInserita:
+          type: boolean
+        verificaPratiche:
+          type: boolean
+        richiestaPareri:
+          type: boolean
+        necessariaIntegrazione:
+          type: boolean
+        praticheApprovate:
+          type: boolean
+        attesaPagamento:
+          type: boolean
+        pronteRilascio:
+          type: boolean
+        praticheDaRigettare:
+          type: boolean
+        pratichePreavvisoDiniego:
+          type: boolean
+        praticheArchiviate:
+          type: boolean
+        praticheRigettate:
+          type: boolean
+        gestioneProfilo:
+          type: boolean
+        gestioneUtenti:
+          type: boolean
+        verificaRipristinoLuoghi:
+          type: boolean
+    GroupsDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        auth:
+          $ref: '#/components/schemas/AuthDTO'
+    LoginInfoResponse:
+      type: object
+      properties:
+        auth:
+          type: boolean
+        token:
+          type: string
+        username:
+          type: string
+        groups:
+          $ref: '#/components/schemas/GroupsDTO'
+        userLogged:
+          $ref: '#/components/schemas/UserLoginDTO'
+    UserLoginDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        codiceFiscale:
+          type: string
+        nome:
+          type: string
+        cognome:
+          type: string
+        ragioneSociale:
+          type: string
+        lastLogin:
+          type: string
+          format: date-time
+        email:
+          type: string
+        uoId:
+          type: string
+        indirizzo:
+          type: string
+        municipio_ids:
+          uniqueItems: true
+          type: array
+          items:
+            type: integer
+            format: int32
+    AllegatoRichiestaIntegrazioneRequest:
+      required:
+        - allegato
+      type: object
+      properties:
+        allegato:
+          $ref: '#/components/schemas/AllegatoDTO'
+    AllegatoPraticaInsertRequest:
+      required:
+        - allegato
+        - idPratica
+      type: object
+      properties:
+        idPratica:
+          type: integer
+          format: int64
+        allegato:
+          $ref: '#/components/schemas/AllegatoDTO'
+    AllegatoParereInsertRequest:
+      required:
+        - allegato
+        - idRichiestaParere
+      type: object
+      properties:
+        idRichiestaParere:
+          type: integer
+          format: int64
+        allegato:
+          $ref: '#/components/schemas/AllegatoDTO'
+    AllegatoIntegrazioneInsertRequest:
+      required:
+        - allegato
+        - idRichiestaIntegrazione
+      type: object
+      properties:
+        idRichiestaIntegrazione:
+          type: integer
+          format: int64
+        allegato:
+          $ref: '#/components/schemas/AllegatoDTO'
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    PageUtenteDTO:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UtenteDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/Sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/Sort'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    Sort:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    TypologicalFlagTestoLiberoDTO:
+      required:
+        - descrizione
+        - descrizioneEstesa
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        descrizione:
+          type: string
+        descrizioneEstesa:
+          type: string
+        flagTestoLibero:
+          type: boolean
+    TipoAllegatoGruppoStatoProcessoDTO:
+      type: object
+      properties:
+        tipoAllegato:
+          $ref: '#/components/schemas/TipoAllegatoDTO'
+        flagObbligatorio:
+          type: boolean
+        flagTestoLibero:
+          type: boolean
+        idStatoPratica:
+          type: integer
+          format: int32
+        idTipoProcesso:
+          type: integer
+          format: int32
+        idGruppo:
+          type: integer
+          format: int32
+    GruppoDTO:
+      required:
+        - descrizione
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        descrizione:
+          type: string
+        flagGestInvioMailDetermina:
+          type: boolean
+        flagGestRichiestaParere:
+          type: boolean
+        flagInserisciRichiesta:
+          type: boolean
+        flagConcessioniValide:
+          type: boolean
+        flagFascicolo:
+          type: boolean
+        flagPraticaInserita:
+          type: boolean
+        flagPresaInCarico:
+          type: boolean
+        flagVerificaPratiche:
+          type: boolean
+        flagRichiestaPareri:
+          type: boolean
+        flagNecessariaIntegrazione:
+          type: boolean
+        flagPraticheApprovate:
+          type: boolean
+        flagAttesaPagamento:
+          type: boolean
+        flagPronteRilascio:
+          type: boolean
+        flagPraticheDaRigettare:
+          type: boolean
+        flagPratichePreavvisoDiniego:
+          type: boolean
+        flagPraticheArchiviate:
+          type: boolean
+        flagPraticheRigettate:
+          type: boolean
+        flagGestioneProfilo:
+          type: boolean
+        flagGestioneUtenti:
+          type: boolean
+        flagVerificaRipristinoLuoghi:
+          type: boolean
+    TemplateSimplifiedDTO:
+      required:
+        - mimeType
+        - nomeFile
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        tipoTemplate:
+          $ref: '#/components/schemas/TypologicalDTO'
+        nomeFile:
+          maxLength: 255
+          minLength: 0
+          type: string
+        mimeType:
+          maxLength: 255
+          minLength: 0
+          type: string
+        dataInserimento:
+          type: string
+          format: date-time
+        dataModifica:
+          type: string
+          format: date-time
+        utenteModifica:
+          $ref: '#/components/schemas/UtenteDTO'
+    DashboardDTO:
+      type: object
+      properties:
+        dashboard:
+          type: string
+    PagePraticaDTO:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/PraticaDTO'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/Sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean
+    NotificaScadenzarioDTO:
+      required:
+        - id
+        - pratica
+        - tipoNotificaScadenzario
+        - utente
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pratica:
+          $ref: '#/components/schemas/PraticaSimplifiedDTO'
+        utente:
+          $ref: '#/components/schemas/UtenteDTO'
+        tipoNotificaScadenzario:
+          $ref: '#/components/schemas/TypologicalDTO'
+        dataNotifica:
+          type: string
+          format: date-time
+    PraticaSimplifiedDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPraticaOriginaria:
+          type: integer
+          format: int64
+        idProrogaPrecedente:
+          type: integer
+          format: int64
+        motivazioneRichiesta:
+          type: string
+        datiRichiesta:
+          $ref: '#/components/schemas/DatiRichiestaDTO'
+        firmatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        destinatario:
+          $ref: '#/components/schemas/RichiedenteDTO'
+        municipio:
+          $ref: '#/components/schemas/TypologicalDTO'
+        utentePresaInCarico:
+          $ref: '#/components/schemas/UtenteDTO'
+        utenteCreazione:
+          $ref: '#/components/schemas/UtenteDTO'
+        utenteModifica:
+          $ref: '#/components/schemas/UtenteDTO'
+        utenteAssegnatario:
+          $ref: '#/components/schemas/UtenteDTO'
+        dataCreazione:
+          type: string
+          format: date-time
+        dataInserimento:
+          type: string
+          format: date-time
+        dataModifica:
+          type: string
+          format: date-time
+        tipoProcesso:
+          $ref: '#/components/schemas/TypologicalDTO'
+        statoPratica:
+          $ref: '#/components/schemas/TypologicalDTO'
+        infoPassaggioStato:
+          type: string
+        flagVerificaFormale:
+          type: boolean
+        flagProceduraDiniego:
+          type: boolean
+        protocolli:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtocolloDTO'
+        codiceDetermina:
+          type: string
+        dataEmissioneDetermina:
+          type: string
+          format: date
+        codiceDeterminaRinuncia:
+          type: string
+        dataEmissioneDeterminaRinuncia:
+          type: string
+          format: date
+        notaAlCittadinoRda:
+          type: string
+        codiceDeterminaRda:
+          type: string
+        dataEmissioneDeterminaRda:
+          type: string
+          format: date
+        dataScadenzaPratica:
+          type: string
+          format: date-time
+        dataScadenzaRigetto:
+          type: string
+          format: date-time
+        dataScadenzaPreavvisoDiniego:
+          type: string
+          format: date-time
+        dataScadenzaPagamento:
+          type: string
+          format: date-time
+        contatoreRichiesteIntegrazioni:
+          type: integer
+          format: int32
+        nomeCittadinoEgov:
+          type: string
+        cognomeCittadinoEgov:
+          type: string
+        cfCittadinoEgov:
+          type: string
+        marcaBolloPratica:
+          $ref: '#/components/schemas/MarcaBolloPraticaDTO'
+        flagEsenzionePagamentoCUP:
+          type: boolean
+        motivazioneEsenzionePagamentoCup:
+          type: string
+    DeterminaDTO:
+      type: object
+      properties:
+        mimeType:
+          type: string
+        nomeFile:
+          type: string
+        contenuto:
+          type: string
+    CiviliarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        numero:
+          type: string
+        cod_via:
+          type: string
+        nome_via:
+          type: string
+        esponente:
+          type: string
+        estensione:
+          type: string
+        localita:
+          type: string
+        municipio:
+          type: string
+        data_fine:
+          type: string
+        x:
+          type: string
+        'y':
+          type: string
+        numeroCivico:
+          type: integer
+          format: int32
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+    DataSingoloMunicipioResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/CiviliarioResponse'
+    AllegatoSimplifiedDTO:
+      required:
+        - mimeType
+        - nomeFile
+        - tipoAllegato
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idPratica:
+          type: integer
+          format: int64
+        idParere:
+          type: integer
+          format: int64
+        idIntegrazione:
+          type: integer
+          format: int64
+        idRichiestaParere:
+          type: integer
+          format: int64
+        idRichiestaIntegrazione:
+          type: integer
+          format: int64
+        tipoAllegato:
+          $ref: '#/components/schemas/TipoAllegatoDTO'
+        dataInserimento:
+          type: string
+          format: date-time
+        nota:
+          type: string
+        nomeFile:
+          type: string
+        mimeType:
+          type: string
+        revisione:
+          type: integer
+          format: int32
+        codiceProtocollo:
+          type: string
+  securitySchemes:
+    jwt:
+      type: http
+      in: header
+      scheme: Bearer

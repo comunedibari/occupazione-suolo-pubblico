@@ -1,0 +1,13 @@
+<app-table-prime-ng
+    [dataSource]="this.dataSource" 
+    [columnSchema]="this.columnsSchema" 
+    [actions]="this.actions"
+    [initSortColumn]="initSortColumn" 
+    [directionSortColumn]="directionSortColumn"
+    (onEvent)="this.onTableEvent($event)"
+    [titleTable]="titleTable"
+    [exportName]="exportName"
+    [globalFilters]="globalFilters"
+    [customSort]=true
+>
+</app-table-prime-ng>

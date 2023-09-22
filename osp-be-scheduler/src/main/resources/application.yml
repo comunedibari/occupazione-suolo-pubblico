@@ -1,0 +1,28 @@
+server:
+   port: 8081
+spring:
+   application:
+      name: osp-scheduler
+   quartz:
+      job-store-type: memory
+org.quartz.jobStore.class: org.quartz.simpl.RAMJobStore
+management:
+   endpoints:
+      web:
+         exposure:
+            include: health,info
+   health:
+      mail:
+         enabled: false
+logging:
+   file:
+      path: ./
+   level:
+      root: INFO      
+osp:
+   scheduler:
+      notifications:
+         insert:
+            cron.expression: 0 30 0 ? * *
+      api:
+         baseurl: ""

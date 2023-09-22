@@ -1,0 +1,57 @@
+<form [formGroup]="informazioniAggiuntiveForm">
+    <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+        <div class="p-col-12">
+            <legend class="legend">Informazioni aggiuntive</legend>
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputProtocollo" class="p-text-bold">Num. protocollo</label>
+            <input type="text" id="txtinputProtocollo" name="txtinputProtocollo" pInputText
+                formControlName="numeroProtocollo" [readonly]="true">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputStatoPratica" class="p-text-bold">Stato pratica</label>
+            <input type="text" id="txtinputStatoPratica" name="txtinputStatoPratica" pInputText
+                formControlName="statoPratica" [readonly]="true">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputDataInserimento" class="p-text-bold">Data di inserimento pratica</label>
+            <p-calendar name='txtinputDataInserimento' dateFormat="dd/mm/yy" formControlName="dataInserimento" icon="pi pi-calendar" [showIcon]="true" styleClass="data-calendar readonly"></p-calendar>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputDataScadenza" class="p-text-bold">Data di scadenza tempi procedimentali</label>
+            <p-calendar name='txtinputDataScadenza' dateFormat="dd/mm/yy" formControlName="dataScadenzaProcedimento" icon="pi pi-calendar" [showIcon]="true" styleClass="data-calendar readonly"></p-calendar>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputProprietario" class="p-text-bold">Istruttore</label>
+            <input type="text" id="txtinputProprietario" name="txtinputProprietario" pInputText
+                formControlName="proprietarioPratica" [readonly]="true">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputDetermina" class="p-text-bold">Numero determina</label>
+            <input type="text" id="txtinputDetermina" name="txtinputDetermina" pInputText
+                formControlName="idDetermina" [readonly]="true">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputScadenzaPagamento" class="p-text-bold">Data di scadenza di pagamento</label>
+            <p-calendar name='txtinputScadenzaPagamento' dateFormat="dd/mm/yy" formControlName="dataScadenzaPagamento" icon="pi pi-calendar" [showIcon]="true" styleClass="data-calendar readonly"></p-calendar>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox 
+                class="p-mb-1" id="checkBoxEsenzioneCup" label="Esente da pagamento CUP" [binary]=true
+                [formControl]="informazioniAggiuntiveForm.get('flagEsenzionePagamentoCUP')" [readonly]="true"
+            ></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtinputEsenzioneCup" class="p-text-bold">Motivazione esenzione Cup:</label>
+            <input
+                type="text"
+                pInputText
+                id="txtinputEsenzioneCup"
+                formControlName="motivazioneEsenzionePagamentoCup"
+                [readonly]="true"
+            />
+        </div>
+    </div>
+</form>
+

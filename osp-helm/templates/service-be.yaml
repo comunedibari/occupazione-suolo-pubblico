@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "osp.fullname" . }}-be
+  labels:
+    {{- include "osp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.serviceBe.type }}
+  ports:
+    - port: {{ .Values.serviceBe.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "ospBe.selectorLabels" . | nindent 4 }}

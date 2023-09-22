@@ -1,0 +1,521 @@
+<form [formGroup]="inserisciPraticaForm">
+    <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2" formGroupName="firmatario">
+        <div class="p-col-12">
+            <legend class="legend">Dati dell'Istante</legend>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtFirmatarioRuolo" class="p-text-bold">Ruolo *</label>
+            <p-dropdown [options]="tipoRuoloFirmatario$ | async" formControlName="idTipoRuoloRichiedente"
+                placeholder="Seleziona tipologia richiedente"
+                optionValue="id" optionLabel="descrizione" (onChange)="tipoRuloChanged($event)" [readonly]="this.checkDisabled() || isAvviaRettifica"></p-dropdown>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0" *ngIf="isRuoloAltro">
+          <label for="descrizioneRuolo" class="p-text-bold">Descrizione Ruolo *</label>
+          <input type="text" formControlName="descrizioneRuolo" id="descrizioneRuolo" name="descrizioneRuolo" (keyup)="onNameKeyup($event)"
+                 pInputText [readonly]="this.checkDisabled()">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0" *ngIf="isRuoloPersonaFisica">
+          <label for="qualitaRuolo" class="p-text-bold">In qualità di *</label>
+          <input type="text" formControlName="qualitaRuolo" id="qualitaRuolo" name="qualitaRuolo" (keyup)="onNameKeyup($event)"
+                 pInputText [readonly]="this.checkDisabled()" pTooltip="Indicare, ad esempio, proprietario, diretto interessato, volontario, ecc.">
+        </div>
+        <div [ngClass]="{'p-offset-4': isRuoloAltro || isRuoloPersonaFisica, 'p-offset-8': !isRuoloAltro && !isRuoloPersonaFisica}"></div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtFirmatarioNome" class="p-text-bold">Nome {{!ragsocDestinatario ? '*' : ''}}</label>
+            <input type="text" formControlName="nome" id="txtFirmatarioNome" name="txtFirmatarioNome" (keyup)="onNameKeyup($event)"
+                pInputText [readonly]="this.checkDisabled()">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtFirmatarioCognome" class="p-text-bold">Cognome {{!ragsocDestinatario ? '*' : ''}}</label>
+            <input type="text" formControlName="cognome" id="txtFirmatarioCognome" name="txtFirmatarioCognome" (keyup)="onNameKeyup($event)"
+                pInputText [readonly]="this.checkDisabled()">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtFirmatarioCodicefiscale" class="p-text-bold">Codice Fiscale / Partita IVA *</label>
+            <input type="text" formControlName="codiceFiscalePartitaIva" id="txtFirmatarioCodicefiscale" name="txtFirmatarioCodicefiscale" pInputText [readonly]="this.checkDisabled()"
+                oninput="this.value = this.value.toUpperCase()"
+            >
+            <p-message *ngIf="isNotValid('codiceFiscalePartitaIva','firmatario')" severity="error" text="Formato codice fiscale o partita iva non valido."></p-message>
+        </div>
+        <p-fieldset legend="Dati di nascita" class="p-col-12 p-pb-3 p-m-0">
+            <div class="p-grid">
+                <div class="p-field p-col-12 p-md-6 p-lg-3 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioDatadinascita" class="p-text-bold">Data di nascita *</label>
+                    <p-calendar formControlName="dataDiNascitaForm" name='txtFirmatarioDatadinascita'
+                        dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearBirth()" [monthNavigator]="true"
+                        placeholder="dd/mm/yyyy" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [maxDate]="limitData"
+                        inputId="txtFirmatarioDatadinascita" styleClass="data-calendar"></p-calendar>
+                </div>
+                <div class="p-field p-col-12 p-md-6 p-lg-3 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioComuneNascita" class="p-text-bold">Comune di nascita *</label>
+                    <input type="text" formControlName="comuneDiNascita" id="txtFirmatarioComuneNascita" name="txtFirmatarioComuneNascita" pInputText [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-md-6 p-lg-3 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioProvinciaNascita" class="p-text-bold">Provincia di nascita *</label>
+                    <input type="text" formControlName="provinciaDiNascita" id="txtFirmatarioProvinciaNascita" name="txtFirmatarioProvinciaNascita" maxlength="2" pInputText [readonly]="this.checkDisabled()"
+                        oninput="this.value = this.value.toUpperCase()"
+                    >
+                </div>
+                <div class="p-field p-col-12 p-md-6 p-lg-3 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioNazionalita" class="p-text-bold">Nazionalità *</label>
+                    <input type="text" formControlName="nazionalita" id="txtFirmatarioNazionalita" name="txtFirmatarioNazionalita" pInputText [readonly]="this.checkDisabled()">
+                </div>
+            </div>
+        </p-fieldset>
+        <p-fieldset legend="Dati di residenza" class="p-col-12 p-pb-3 p-m-0">
+            <div class="p-grid">
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioCitta" class="p-text-bold">Città di residenza *</label>
+                    <input type="text" formControlName="citta" id="txtFirmatarioCitta" name="txtFirmatarioCitta" pInputText [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioIndirizzo" class="p-text-bold">Indirizzo di residenza *</label>
+                    <input minMax [maxLength]="100" type="text" formControlName="indirizzo" id="txtFirmatarioIndirizzo" name="txtFirmatarioIndirizzo" pInputText [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioCivico" class="p-text-bold">Civico di residenza *</label>
+                    <input type="text" minMax [maxLength]="10" formControlName="civico" id="txtFirmatarioCivico" name="txtFirmatarioCivico" pInputText [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioProvincia" class="p-text-bold">Provincia di residenza *</label>
+                    <input type="text" formControlName="provincia" id="txtFirmatarioProvincia" name="txtFirmatarioProvincia" maxlength="2" pInputText [readonly]="this.checkDisabled()"
+                        oninput="this.value = this.value.toUpperCase()"
+                    >
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioCAP" class="p-text-bold">CAP di residenza *</label>
+                    <input type="text" formControlName="cap" id="txtFirmatarioCAP" name="txtFirmatarioCAP" maxlength="5" pInputText [readonly]="this.checkDisabled()">
+                    <p-message *ngIf="isNotValid('cap','firmatario')" severity="error" text="Formato CAP non valido."></p-message>
+                </div>
+            </div>
+        </p-fieldset>
+        <p-fieldset legend="Recapiti e documento d'identità" class="p-col-12 p-pb-3 p-m-0">
+            <div class="p-grid">
+                <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioRecapitoTelefonico" class="p-text-bold">Recapito telefonico *</label>
+                    <input type="text" formControlName="recapitoTelefonico" id="txtFirmatarioRecapitoTelefonico" name="txtFirmatarioRecapitoTelefonico" pInputText [readonly]="this.checkDisabled()">
+                    <p-message *ngIf="isNotValid('recapitoTelefonico','firmatario')" severity="error" text="Formato recapito telefonico non valido."></p-message>
+                </div>
+                <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioEmail" class="p-text-bold">Email/PEC *</label>
+                    <input type="email" formControlName="email" id="txtFirmatarioEmail" name="txtFirmatarioEmail" pInputText [readonly]="this.checkDisabled()">
+                    <p-message *ngIf="isNotValid('email','firmatario')" severity="error" text="Formato email non valido."></p-message>
+                </div>
+                <div class="p-fiels p-offset-4"></div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioTipoDocumento" class="p-text-bold">Tipo documento di riconoscimento che si allega {{ragsocDestinatario ? '' : '*'}}</label>
+                    <p-dropdown [options]="tipoDocRicFirmatario$ | async" formControlName="idTipoDocumentoAllegato" id="txtFirmatarioTipoDocumento"
+                        optionValue="id" optionLabel="descrizione" placeholder="Seleziona tipologia documento riconoscimento" [readonly]="this.checkDisabled()"></p-dropdown>
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioNumeroDocumento" class="p-text-bold">Numero documento di riconoscimento che si allega {{ragsocDestinatario ? '' : '*'}}</label>
+                    <input minMax [maxLength]="50" type="text" formControlName="numeroDocumentoAllegato" id="txtFirmatarioNumeroDocumento" name="txtFirmatarioNumeroDocumento" pInputText [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtFirmatarioAmministrazioneDocumento" class="p-text-bold">Documento rilasciato da {{ragsocDestinatario ? '' : '*'}}</label>
+                    <input type="text" minMax [maxLength]="50" formControlName="amministrazioneDocumentoAllegato" id="txtFirmatarioAmministrazioneDocumento" name="txtFirmatarioAmministrazioneDocumento" pInputText [readonly]="this.checkDisabled()">
+                </div>
+            </div>
+        </p-fieldset>
+    </div>
+    <div *ngIf="showAnagraficaDestinatario" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2" formGroupName="destinatario">
+        <div class="p-col-12">
+            <legend class="legend">Dati del Beneficiario</legend>
+        </div>
+        <div class="p-grid p-col-12">
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioNome" class="p-text-bold">Nome {{!ragsocDestinatario ? '*' : ''}}</label>
+                <input type="text" formControlName="nome" id="txtDestinatarioNome" name="txtDestinatarioNome" (keyup)="onNameKeyup($event)"
+                    pInputText (change)="destinatarioCheck(false)" [readonly]="this.checkDisabled()">
+                <p-message *ngIf="isNotValid('nome','destinatario')" severity="error" text="Valorizzare Nome e Cognome o Denominazione"></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioCognome" class="p-text-bold">Cognome {{!ragsocDestinatario ? '*' : ''}}</label>
+                <input type="text" formControlName="cognome" id="txtDestinatarioCognome" name="txtDestinatarioCognome" (keyup)="onNameKeyup($event)"
+                    pInputText (change)="destinatarioCheck(false)" [readonly]="this.checkDisabled()">
+                <p-message *ngIf="isNotValid('cognome','destinatario')" severity="error" text="Valorizzare Nome e Cognome o Denominazione"></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioDenominazione" class="p-text-bold">Denominazione / Ragione sociale {{ragsocDestinatario ? '*' : ''}}</label>
+                <input type="text" formControlName="denominazione" id="txtDestinatarioDenominazione" name="txtDestinatarioDenominazione" pInputText (change)="destinatarioCheck(true)" [readonly]="this.checkDisabled()">
+                <p-message *ngIf="isNotValid('denominazione','destinatario')" severity="error" text="Valorizzare Nome e Cognome o Denominazione"></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioCodicefiscale" class="p-text-bold">Codice Fiscale / Partita IVA *</label>
+                <input type="text" formControlName="codiceFiscalePartitaIva" id="txtDestinatarioCodicefiscale" name="txtDestinatarioCodicefiscale" pInputText [readonly]="this.checkDisabled()"
+                    oninput="this.value = this.value.toUpperCase()"
+                >
+                <p-message *ngIf="isNotValid('codiceFiscalePartitaIva','destinatario')" severity="error" text="Formato codice fiscale o partita iva non valido."></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioCitta" class="p-text-bold">Città di residenza/sede legale *</label>
+                <input type="text" formControlName="citta" id="txtDestinatarioCitta" name="txtDestinatarioCitta" pInputText [readonly]="this.checkDisabled()">
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioIndirizzo" class="p-text-bold">Indirizzo di residenza/sede legale *</label>
+                <input type="text" minMax [maxLength]="100" formControlName="indirizzo" id="txtDestinatarioIndirizzo" name="txtDestinatarioIndirizzo" pInputText [readonly]="this.checkDisabled()">
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-lg-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioCivico" class="p-text-bold">Civico di residenza/sede legale *</label>
+                <input type="text" minMax [maxLength]="10" formControlName="civico" id="txtDestinatarioCivico" name="txtDestinatarioCivico" pInputText [readonly]="this.checkDisabled()">
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioProvincia" class="p-text-bold">Provincia di residenza/sede legale *</label>
+                <input type="text" formControlName="provincia" id="txtDestinatarioProvincia" name="txtDestinatarioProvincia" maxlength="2" pInputText [readonly]="this.checkDisabled()"
+                    oninput="this.value = this.value.toUpperCase()"
+                >
+            </div>
+            <div class="p-fiels p-offset-4"></div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioRecapitoTelefonico" class="p-text-bold">Recapito telefonico *</label>
+                <input type="text" formControlName="recapitoTelefonico" id="txtDestinatarioRecapitoTelefonico" name="txtDestinatarioRecapitoTelefonico" pInputText [readonly]="this.checkDisabled()">
+                <p-message *ngIf="isNotValid('recapitoTelefonico','destinatario')" severity="error" text="Formato recapito telefonico non valido."></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioEmail" class="p-text-bold">Email/PEC *</label>
+                <input type="email" formControlName="email" id="txtDestinatarioEmail" name="txtDestinatarioEmail" pInputText [readonly]="this.checkDisabled()">
+                <p-message *ngIf="isNotValid('email','destinatario')" severity="error" text="Formato email non valido."></p-message>
+            </div>
+            <div class="p-fiels p-offset-4"></div>
+            <div class="p-field p-col-12 p-md-4 p-lg-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioTipoDocumento" class="p-text-bold">Tipo documento di riconoscimento che si allega {{ragsocDestinatario ? '' : '*'}}</label>
+                <p-dropdown [options]="tipoDocRicDestinatario$ | async" formControlName="idTipoDocumentoAllegato" id="txtDestinatarioTipoDocumento"
+                    optionValue="id" optionLabel="descrizione" placeholder="Seleziona tipologia documento riconoscimento" [readonly]="this.checkDisabled() || ragsocDestinatario"></p-dropdown>
+                <p-message *ngIf="isNotValid('idTipoDocumentoAllegato','destinatario')" severity="error" text="Valorizzare i dati del documento che si allega"></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-lg-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioNumeroDocumento" class="p-text-bold">Numero documento di riconoscimento che si allega {{ragsocDestinatario ? '' : '*'}}</label>
+                <input minMax [maxLength]="50" type="text" formControlName="numeroDocumentoAllegato" id="txtDestinatarioNumeroDocumento" name="txtDestinatarioNumeroDocumento" pInputText [readonly]="this.checkDisabled() || ragsocDestinatario">
+                <p-message *ngIf="isNotValid('numeroDocumentoAllegato','destinatario')" severity="error" text="Valorizzare i dati del documento che si allega"></p-message>
+            </div>
+            <div class="p-field p-col-12 p-md-4 p-lg-4 p-pb-3 p-m-0">
+                <label for="txtDestinatarioAmministrazioneDocumento" class="p-text-bold">Documento rilasciato da {{ragsocDestinatario ? '' : '*'}}</label>
+                <input type="text" minMax [maxLength]="50" formControlName="amministrazioneDocumentoAllegato" id="txtDestinatarioAmministrazioneDocumento" name="txtDestinatarioAmministrazioneDocumento" pInputText [readonly]="this.checkDisabled() || ragsocDestinatario">
+                <p-message *ngIf="isNotValid('amministrazioneDocumentoAllegato','destinatario')" severity="error" text="Valorizzare i dati del documento che si allega"></p-message>
+            </div>
+        </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2" formGroupName="datiRichiesta">
+        <div class="p-col-12">
+            <legend class="legend">Dati del suolo di occupazione</legend>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-7 p-pb-3 p-m-0 div-indirizzo">
+            <label for="txtOccupazioneUbicazione" class="p-text-bold">Indirizzo ubicazione occupazione *</label>
+            <p-autoComplete formControlName="datoCiviliario" id="txtOccupazioneUbicazione" field="indirizzo"
+                [suggestions]="civilarioResults" (completeMethod)="searchCivilario($event)" (onSelect)="tickflagNumeroCivicoAssente($event)" delay=200 [readonly]="this.checkDisabled() || isAvviaRettifica"></p-autoComplete>
+            <button *ngIf="addInserisciIndirizzoManualmente" pButton class="p-button-rounded btn-custom-style button-add-address" icon="pi pi-plus" (click)="inserisciIndirizzoManualmente()" pTooltip="Inserisci indirizzo manualmente"></button>
+        </div>
+        <div class="p-field p-col-12 p-md-12 p-pb-3 p-m-0">
+            <label for="txtNoteUbicazione" class="p-text-bold">Note ubicazione *</label>
+            <small> (Specificare se il civico è assente o non corrisponde, eventuali incroci stradali d'interesse, eventuali altri numeri civici richiesti, etc...)</small>
+            <textarea formControlName="noteUbicazione" id="txtNoteUbicazione" name="txtNoteUbicazione" pInputTextarea [readonly]="this.checkDisabled()"></textarea>
+        </div>
+        <div *ngIf="isDettaglio" class="p-field p-col-4 p-pb-3 p-m-0">
+        </div>
+        <div *ngIf="isDettaglio" class="p-field p-col-4 p-pb-3 p-m-0">
+            <button pButton label="Visualizza su mappa" type="button" class="btn-custom-style button-avanti" style="width: 100% !important"
+                (click)="onApriMappaClicked()"></button>
+        </div>
+        <div *ngIf="isDettaglio" class="p-field p-col-8 p-pb-3 p-m-0">
+        </div>
+        <p-fieldset legend="Dati di occupazione: superficie totale" class="p-col-12 p-pb-3 p-m-0">
+            <div class="p-grid">
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneSuperficeArea" class="p-text-bold">Superficie area [mq] *</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="superficieAreaMq" id="txtOccupazioneSuperficeArea" name="txtOccupazioneSuperficeArea"
+                    pInputText placeholder="Es: 0.00" pTooltip="Numero di mq di superficie totale dell'area di occupazione del suolo pubblico"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneLarghezza" class="p-text-bold">Larghezza [m] *</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="larghezzaM" id="txtOccupazioneLarghezza" name="txtOccupazioneLarghezza"
+                    pInputText placeholder="Es: 0.00" pTooltip="Larghezza della superficie totale di occupazione del suolo pubblico"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneLunghezza" class="p-text-bold">Lunghezza [m] *</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="lunghezzaM" id="txtOccupazioneLunghezza" name="txtOccupazioneLunghezza"
+                    pInputText placeholder="Es: 0.00" pTooltip="Lunghezza della superficie totale di occupazione del suolo pubblico"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+            </div>
+        </p-fieldset>
+        <p-fieldset legend="Dati di occupazione: superficie sul marciapiede" class="p-col-12 p-pb-3 p-m-0">
+            <div class="p-grid">
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneSuperficeAreaMarciapiede" class="p-text-bold">Superficie area sul marciapiede [mq]</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="superficieMarciapiedeMq" id="txtOccupazioneSuperficeAreaMarciapiede" name="txtOccupazioneSuperficeAreaMarciapiede"
+                    pInputText placeholder="Es: 0.00" pTooltip="Numero di mq di superficie dell'area di occupazione del marciapiede"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneLarghezzaMarciapiede" class="p-text-bold">Larghezza [m]</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="larghezzaMarciapiedeM" id="txtOccupazioneLarghezzaMarciapiede" name="txtOccupazioneLarghezzaMarciapiede"
+                    pInputText placeholder="Es: 0.00" pTooltip="Larghezza della superficie di occupazione del suolo pubblico sul marciapiede"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneLunghezzaMarciapiede" class="p-text-bold">Lunghezza [m]</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="lunghezzaMarciapiedeM" id="txtOccupazioneLunghezzaMarciapiede" name="txtOccupazioneLunghezzaMarciapiede"
+                    pInputText placeholder="Es: 0.00" pTooltip="Lunghezza della superficie di occupazione del suolo pubblico sul marciapiede"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+            </div>
+        </p-fieldset>
+        <p-fieldset legend="Dati di occupazione: superficie sulla carreggiata" class="p-col-12 p-pb-3 p-m-0">
+            <div class="p-grid">
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneLarghezzaCarreggiata" class="p-text-bold">Larghezza [m]</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="larghezzaCarreggiataM" id="txtOccupazioneLarghezzaCarreggiata" name="txtOccupazioneLarghezzaCarreggiata"
+                    pInputText placeholder="Es: 0.00" pTooltip="Larghezza della superficie di occupazione del suolo pubblico sulla carreggiata"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <label for="txtOccupazioneLunghezzaCarreggiata" class="p-text-bold">Lunghezza [m]</label>
+                    <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" formControlName="lunghezzaCarreggiataM" id="txtOccupazioneLunghezzaCarreggiata" name="txtOccupazioneLunghezzaCarreggiata"
+                    pInputText placeholder="Es: 0.00" pTooltip="Lunghezza della superficie di occupazione del suolo pubblico sulla carreggiata"
+                         min=0 onkeypress="return !(event.charCode == 44)" [readonly]="this.checkDisabled()">
+                </div>
+            </div>
+        </p-fieldset>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('stalloDiSosta')"
+            name="chkStalloDiSosta" id="chkStalloDiSosta" label="Stallo di sosta" [binary]="true" [readonly]="this.checkDisabled()"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('presScivoliDiversamenteAbili')"
+            name="chkPresScivoliDiversamenteAbili" id="chkPresScivoliDiversamenteAbili" label="Presenza scivoli per diversamente abili" [binary]="true" [readonly]="this.checkDisabled()"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('presPassiCarrabiliDiversamenteAbili')"
+            name="chkPresPassiCarrDiversamenteAbili" id="chkPresPassiCarrDiversamenteAbili" label="Presenza stalli di sosta per diversamente abili" [binary]="true" [readonly]="this.checkDisabled()"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+            <label for="txtRichiestaDataInizioOccupazione" class="p-text-bold">Data inizio occupazione *</label>
+            <p-calendar formControlName="dataInizioOccupazioneForm" name='txtRichiestaDataInizioOccupazione'
+                dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+                placeholder="dd/mm/yyyy" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [minDate]="minDataPeriodo"
+                (onClose)="onPeriodOccupazioneChange()"
+                inputId="txtRichiestaDataInizioOccupazione" styleClass="data-calendar"></p-calendar>
+        </div>
+        <div class="p-field p-col-12 p-md-2 p-pb-3 p-m-0">
+            <label for="txtRichiestaOraInizioOccupazione" class="p-text-bold">Ora inizio occupazione</label>
+            <p-calendar formControlName="oraInizioOccupazioneForm" inputId="txtRichiestaOraInizioOccupazione" name='txtRichiestaOraInizioOccupazione' icon="pi pi-clock" [showIcon]="true"
+                timeOnly="true" showTime="true" hourFormat="24" appendTo="body"
+                placeholder="hh:mm" styleClass="data-calendar" [required]="orarioRequired"></p-calendar>
+        </div>
+        <div class="p-field p-col-12 p-md-4 p-pb-3 p-m-0">
+            <label for="txtRichiestaDataScadenzaOccupazione" class="p-text-bold">Data scadenza occupazione *</label>
+            <p-calendar formControlName="dataScadenzaOccupazioneForm" name='txtRichiestaDataScadenzaOccupazione'
+                dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+                placeholder="dd/mm/yyyy" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [minDate]="minDataPeriodo"
+                (onClose)="onPeriodOccupazioneChange()"
+                inputId="txtRichiestaDataScadenzaOccupazione" styleClass="data-calendar"></p-calendar>
+                <p-message *ngIf="isNotValidFormGroup('validDateRange','datiRichiesta')" severity="error" text="La data scadenza occupazione non può essere inferiore alla data inizio occupazione"></p-message>
+        </div>
+        <div class="p-field p-col-12 p-md-2 p-pb-3 p-m-0">
+            <label for="txtRichiestaOraScadenzaOccupazione" class="p-text-bold">Ora scadenza occupazione</label>
+            <p-calendar formControlName="oraScadenzaOccupazioneForm" inputId="txtRichiestaOraScadenzaOccupazione" name='txtRichiestaOraScadenzaOccupazione' icon="pi pi-clock" [showIcon]="true"
+                timeOnly="true" showTime="true" hourFormat="24" appendTo="body"
+                placeholder="hh:mm" styleClass="data-calendar" [required]="orarioRequired"></p-calendar>
+            <p-message *ngIf="isNotValidFormGroup('validOrariRange','datiRichiesta')" severity="error" text="L'intervallo tra ora inizio e ora scadenza occupazione deve essere di almeno un'ora"></p-message>
+        </div>
+        <div class="p-field p-col-12 p-grid p-pb-3 p-m-0">
+            <label for="idAttivitaDaSvolgere" class="p-text-bold">Attività da svolgere *</label>
+            <ng-container *ngFor="let element of (tipoAttivitaDaSvolgere$ | async)">
+                <div class="p-field p-col-12 p-sm-3">
+                    <p-radioButton name="idAttivitaDaSvolgere" [label]="element.descrizione" [value]="element.id" [pTooltip]="element.descrizione"
+                        formControlName="idAttivitaDaSvolgere" styleClass="checkbox-form" (onClick)="setTipoAttivitaDaSvolgere(element)" [ngStyle]="{'pointer-events': this.checkDisabled() || isAvviaRettifica ? 'none' : 'auto'}"></p-radioButton>
+                </div>
+            </ng-container>
+        </div>
+        <div *ngIf="showAttivitaDaSvolgereAltro == 1" class="p-field p-col-6 p-md-6 p-pb-3 p-m-0">
+            <label for="txtTipoTitoloEdilizio" class="p-text-bold">Tipologia titolo edilizio *</label>
+            <p-dropdown [options]="tipoTitoloEdilizio$ | async" formControlName="idTipologiaTitoloEdilizio" id="txtTipoTitoloEdilizio"
+                optionValue="id" optionLabel="descrizione" placeholder="Seleziona tipologia titolo edilizio"
+                (onChange)="onTipoTitoloEdilizioChanged($event.value)" [readonly]="this.checkDisabled()"></p-dropdown>
+        </div>
+        <div *ngIf="showDescrizioneTitoloEdilizio" class="p-field p-col-6 p-md-6 p-pb-3 p-m-0">
+            <label for="txtDescrTipoTitoloEdilizio" class="p-text-bold">Definisci tipo titolo edilizio *</label>
+            <input type="text" formControlName="descrizioneTitoloEdilizio" id="txtDescrTipoTitoloEdilizio" name="txtDescrTipoTitoloEdilizio" maxlength="100" pInputText [readonly]="this.checkDisabled()">
+        </div>
+        <div *ngIf="showAttivitaDaSvolgereAltro == 1" class="p-field p-col-6 p-md-6 p-pb-3 p-m-0">
+            <label for="txtRiferimentoTitoloEdilizio" class="p-text-bold">Riferimento titolo edilizio *</label>
+            <input type="text" formControlName="riferimentoTitoloEdilizio" id="txtRiferimentoTitoloEdilizio" name="txtRiferimentoTitoloEdilizio" pInputText [readonly]="this.checkDisabled()">
+        </div>
+        <div *ngIf="showAttivitaDaSvolgereAltro == 2" class="p-field p-col-12 p-md-12 p-pb-3 p-m-0">
+            <label for="txtRichiestaAttivitaAltro" class="p-text-bold">Definisci attività da svolgere *</label>
+            <textarea formControlName="descrizioneAttivitaDaSvolgere" id="txtRichiestaAttivitaAltro" name="txtRichiestaAttivitaAltro" pInputTextarea [readonly]="this.checkDisabled() || this.isAvviaRettifica"></textarea>
+        </div>
+        <div class="p-field p-col-12 p-grid p-pb-3 p-m-0">
+            <label for="txtTipoManufatto" class="p-text-bold">Manufatto da utilizzare</label>
+            <ng-container *ngFor="let element of (tipoManufatto$ | async)">
+                <div class="p-field p-col-12 p-sm-3">
+                    <p-radioButton name="idManufatto" [label]="element.descrizione" [value]="element.id" [pTooltip]="element.descrizione"
+                        formControlName="idManufatto" styleClass="checkbox-form" (onClick)="setTipoManufatto(element)" [ngStyle]="{'pointer-events': this.checkDisabled() ? 'none' : 'auto'}"></p-radioButton>
+                </div>
+            </ng-container>
+        </div>
+        <div *ngIf="showManufattoAltro" class="p-field p-col-12 p-md-12 p-pb-3 p-m-0">
+            <label for="txtRichiestaManufattoAltro" class="p-text-bold">Definisci manufatto da utilizzare</label>
+            <textarea formControlName="descrizioneManufatto" id="txtRichiestaManufattoAltro" name="txtRichiestaManufattoAltro" pInputTextarea [readonly]="this.checkDisabled()"></textarea>
+        </div>
+    </div>
+    <div *ngIf="isRinunciaConcessione" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+        <div class="p-col-12">
+            <legend class="legend">Rinuncia concessione</legend>
+        </div>
+        <div class="p-field p-col-12 p-md-12 p-pb-3 p-m-0">
+            <label for="txtMotivazioneRichiesta" class="p-text-bold">Motivazione richiesta *</label>
+            <textarea formControlName="motivazioneRichiesta" id="txtMotivazioneRichiesta" name="txtMotivazioneRichiesta" pInputTextarea [readonly]="this.isRinunciaConcessione ? false : true"></textarea>
+        </div>
+    </div>
+    <div *ngIf="isAvviaRettifica" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+        <div class="p-col-12">
+            <legend class="legend">Determina di rettifica *</legend>
+        </div>
+        <div class="p-field p-col-12 p-pb-3  p-m-0">
+            <p-selectButton name="determinaOptions" [options]="determinaOptions" optionLabel="label" optionValue="value" styleClass="button-select" (onChange)="determinaActions($event)"></p-selectButton>
+        </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2" formGroupName="datiRichiesta">
+        <div class="p-col-12">
+            <legend class="legend">Dichiarazioni aggiuntive *</legend>
+        </div>
+        <div class="p-col-12 p-grid p-nogutter">
+            <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0 p-d-flex p-ai-center" style="margin-left: 8px;">
+                <p-checkbox class="p-mb-1" name="checkBoxEsenzione" id="checkBoxEsenzione" label="Dichiaro di essere esente dal pagamento della marca da bollo" pTooltip="Esenzione pagamento marca da bollo"
+                    [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagEsenzioneMarcaDaBollo')" (onChange)="changeEsenzione()"></p-checkbox>
+            </div>
+            <div *ngIf="isEsente(inserisciPraticaForm.get('datiRichiesta.flagEsenzioneMarcaDaBollo').value)" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0 p-ml-0">
+                <label for="txtinputEsenzione" class="p-text-bold">Motivazione esenzione (*)</label>
+                <input type="text" id="txtinputEsenzione" name="txtinputEsenzione" (onChange)="changeEsenzione()" pTooltip="Descrivere la motivazione dell’esenzione ed indicare eventualmente il riferimento normativo"
+                    pInputText [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('motivazioneEsenzioneMarcaBollo')" [readonly]="this.readonly">
+            </div>
+        </div>
+        <div class="p-field p-col-12 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" name="checkBoxSuoloPubblico" id="checkBoxSuoloPubblico" label="Accettazione regolamento suolo pubblico (Dichiaro di essere a conoscenza e di rispettare il Regolamento comunale per l'occupazione di spazi ed aree pubbliche)"
+                [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagAccettazioneRegSuoloPubblico')" [readonly]="isAvviaRettifica"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" name="checkBoxRispettoTerzi" id="checkBoxRispettoTerzi" label="Rispetto interesse dei terzi (Dichiaro di rispettare l'interesse dei terzi - ove necessario deve essere allegata dichiarazione di consenso dei terzi interessati)"
+                [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagRispettoInteresseTerzi')" [readonly]="isAvviaRettifica"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" name="checkDanni" id="checkDanni" label="Accettazione dell'obbligo di riparazione danni (Dichiaro di obbligarsi a riparare tutti i danni derivanti dall'occupazione e/o dai depositi permessi)"
+                [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagObbligoRiparazioneDanni')" [readonly]="isAvviaRettifica"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" name="checkRispettoDisposizioni" id="checkRispettoDisposizioni" label="Rispetto disposizioni regolamento (Dichiaro di obbligarsi a rispettare le disposizioni contenute nel regolamento di polizia urbana, edilizia e d'igiene vigenti)"
+                [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagRispettoDisposizioniRegolamento')" [readonly]="isAvviaRettifica"></p-checkbox>
+        </div>
+        <div class="p-field p-col-12 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" name="checkTassaOccupazione" id="checkTassaOccupazione" label="Conoscenza regolamento per la tassa di occupazione (Dichiaro di conoscere, ai fini delle responsabilità civili e penali, gli articoli del Regolamento comunale per l'applicazione della tassa per l'occupazione di spazi ed aree pubbliche: art. 14, art. 16, art.17, art. 18)"
+                [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagConoscenzaTassaOccupazione')" [readonly]="isAvviaRettifica"></p-checkbox>
+        </div>
+        <div *ngIf="isRichiestaProroga" class="p-field p-col-12 p-pb-3 p-m-0 p-d-flex p-ai-center">
+            <p-checkbox class="p-mb-1" name="checkNonModificheConcessione" id="checkNonModificheConcessione" label="Dichiaro che l'area oggetto di occupazione non ha subito modifiche e che non sono in corso occupazioni limitrofe atte ad intralciare o modificare le dichiarazioni rese nella precedente richiesta"
+                [binary]="true" [formControl]="inserisciPraticaForm.controls['datiRichiesta'].get('flagNonModificheRispettoConcessione')"></p-checkbox>
+        </div>
+    </div>
+    <div class="p-d-flex p-col-12 p-jc-end">
+        <button *ngIf="showButtonAvanti()" pButton label="Avanti" type="button" class="btn-custom-style button-avanti" [disabled]="isDiffMinutesInvalid" (click)="confermaDatiDialog()"></button>
+        <button *ngIf="isAvviaRettifica" pButton label="Conferma" type="button" class="btn-custom-style button-avanti" [disabled]="isDiffMinutesInvalid || isConfirmDisabled() || !confermaDatiDetermina" (click)="confermaDatiDialog()"></button>
+        <!--
+        <button *ngIf="isDettaglio" pButton label="Allegati" type="button" class="btn-custom-style button-avanti" (click)="loadAllegati()"></button>
+        -->
+    </div>
+</form>
+
+<p-dialog header="Inserimento indirizzo manuale:" [(visible)]="showInserisciIndirizzoManualmenteDialog" (onHide)="closeInserisciIndirizzoManualmenteDialog()" styleClass="dialog-500" [draggable]="false" [resizable]="false" [modal]="true" [closable]="true">
+    <div class="p-grid p-m-2">
+        <div class="p-field p-col-12 p-pb-1 p-m-0">
+            <label for="txtNomeVia" class="p-text-bold">Indirizzo (*)</label>
+            <input type="text" pInputText [(ngModel)]="nominatim_option.nome_via" class="stretch">
+        </div>
+        <div class="p-field p-col-12 p-pb-1 p-m-0">
+            <label for="txtCivico" class="p-text-bold">Civico (*)</label>
+            <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" pInputText [(ngModel)]="nominatim_option.numero" class="stretch">
+        </div>
+        <div class="p-field p-col-12 p-pb-1 p-m-0">
+            <label for="txtEsponente" class="p-text-bold">Esponente</label>
+            <input type="text" pInputText [(ngModel)]="nominatim_option.esponente" class="stretch">
+        </div>
+        <div class="p-field p-col-12 p-pb-1 p-m-0">
+            <label for="txtMunicipioID" class="p-text-bold">Municipio (*)</label>
+            <input type="number" minMax [min]="0" [max]="10000" [maxLength]="5" pInputText [(ngModel)]="nominatim_option.municipio" class="stretch">
+        </div>
+        <div class="p-field p-col-12 p-pb-1 p-m-0">
+            <label for="txtLocalita" class="p-text-bold">Localita (*)</label>
+            <input type="text" pInputText [(ngModel)]="nominatim_option.localita" class="stretch">
+        </div>
+    </div>
+    <p-footer>
+        <div class="p-d-flex p-col-12 p-jc-end">
+            <button pButton label="Conferma" class="btn-custom-style" (click)="confermaInserimentoIndirizzoManualmente()"
+                [disabled]="!nominatim_option.nome_via || !nominatim_option.numero || !nominatim_option.municipio || !nominatim_option.localita"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-dialog header="Carica determina e invia comunicazione al cittadino: " [(visible)]="showUploadDeterminaDialog" (onHide)="showUploadDeterminaDialog = false"
+  styleClass="dialog-850" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-2">
+    <div class="p-col-12">
+      <div class="p-field">
+        <label class="p-text-bold">Numero determina: *</label>
+        <input type="text" pInputText [(ngModel)]="this.identificativoDetermina" class="stretch">
+      </div>
+      <div class="p-field">
+        <label for="dataDetermina" class="p-text-bold">Data emissione: *</label><br>
+        <p-calendar name='dataDetermina' dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+            placeholder="dd/mm/yyyy" [(ngModel)]="dataDetermina" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [maxDate]="limitData"
+            inputId="dataDetermina" styleClass="data-calendar">
+        </p-calendar>
+      </div>
+
+      <div class="p-field">
+        <label class="p-text-bold">Upload determina *</label>
+        <app-upload-file
+          *ngIf="isAvviaRettifica"
+          [pratica]="this.pratica"
+          [mode]="uploadMode"
+          [fileClearToggle]="showUploadDeterminaDialog"
+          [destinazioneAllegato]="destinazioneAllegato"
+          [filtroStatoPratica]="filtroStatoPratica"
+          [filtroTipoProcesso]="idRettificaConcessione"
+          [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+          (mandatoryDocuments)="onMandatoryDocuments($event)"
+          (onDocUploaded)="onRettificaUploadedFile($event)"
+        >
+        </app-upload-file>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="closeUploadDeterminaDialog()"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="confermaDatiDialog()" [disabled]="isConfirmDisabled() || !dataDetermina"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+    <div class="p-grid p-m-2">
+        <div class="p-col-12">
+            <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+            <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+            <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+        </div>
+    </div>
+    <p-footer>
+        <div class="p-d-flex p-col-12 p-jc-end">
+        <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+            (click)="inserimentoPratica()"></button>
+        <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+        </div>
+    </p-footer>
+</p-dialog>

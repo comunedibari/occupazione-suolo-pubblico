@@ -1,0 +1,14 @@
+<app-table-prime-ng
+    [titleTable]="this.titleTable"
+    [dataSource]="this.dataSource | async" 
+    [columnSchema]="this.columnSchema" 
+    [actions]="this.actions"
+    [initSortColumn]="initSortColumn" 
+    [directionSortColumn]="directionSortColumn"
+    [globalFilters]="globalFilters"
+    (onEvent)="this.onTableEvent($event)"              
+    [showToolbar]=true
+    [showCaption]=false
+    [paginator]=false
+    >
+</app-table-prime-ng>

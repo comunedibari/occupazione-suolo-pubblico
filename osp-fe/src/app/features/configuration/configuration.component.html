@@ -1,0 +1,29 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Configurazione parametri</h4>
+</div>
+<div>
+    <p-fieldset *ngIf="formGroup" class="p-field p-col-12" legend="Parametri Automi Protocollo" [toggleable]="true">
+        <ng-container *ngFor="let key of (formGroup.controls | keys)">
+            <form [formGroup]="formGroup.controls[key]" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+                <div class="p-field p-col-6 p-sm-6 p-md-6 p-lg-6 p-pb-3 p-m-0">
+                    <label for="{{ key }}-uoId" class="p-text-bold">{{formGroup.controls[key].get('label').value}}</label>
+                    <input id="{{ key }}-uoId" name="{{ key }}-uoId" type="number"
+                        formControlName="uoId" pInputText>
+                    <p-message *ngIf="getControl(key, 'uoId').invalid && getControl(key, 'uoId').dirty"
+                             severity="error" text="Campo obbligatorio"></p-message>
+                </div>
+                <div class="p-field p-col-6 p-sm-6 p-md-6 p-lg-6 p-pb-3 p-m-0">
+                    <label for="{{key}}-label" class="p-text-bold">Denominazione *</label>
+                    <input id="{{key}}-label" name="{{key}}-label" type="text"
+                        formControlName="denominazione" pInputText>
+                    <p-message *ngIf="getControl(key, 'denominazione').invalid && getControl(key, 'denominazione').dirty"
+                             severity="error" text="Campo obbligatorio"></p-message>
+                </div>
+            </form>
+        </ng-container>
+        <div class="p-d-flex p-col-12 p-jc-end">
+            <button pButton label="Salva" type="button" class="btn-custom-style button-avanti"
+                    [disabled]="!editingEnabled" (click)="updateConfiguration()"></button>
+        </div>
+    </p-fieldset>
+</div>

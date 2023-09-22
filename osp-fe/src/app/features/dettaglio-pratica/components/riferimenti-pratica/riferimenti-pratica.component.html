@@ -1,0 +1,24 @@
+<form [formGroup]="riferimentiForm" *ngIf="showRiferimentiPratica()">
+    <div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+        <div class="p-col-12">
+            <legend class="legend">Riferimenti pratica originaria</legend>
+        </div>
+
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label class="p-text-bold">Num. protocollo</label>
+            <input class="pointer" type="text" id="txtinputNumProtocolloOrigine" name="txtinputNumProtocolloOrigine" pInputText formControlName="numeroProtocollo" [readonly]="true">
+        </div>
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label class="p-text-bold">Numero determina</label>
+            <input type="text" id="txtinputNumProvvedimentoOrigine" name="txtinputNumProvvedimentoOrigine" pInputText formControlName="idDetermina" [readonly]="true">
+        </div>
+        <div class="p-field p-col-12 p-pb-3 p-m-0">
+        </div>
+        <div class="p-field p-col-4 p-pb-3 p-m-0">
+            <button pButton label="Dettaglio pratica origine" type="button" class="btn-custom-style button-avanti" style="width: 100% !important"
+                (click)="onDettaglioPraticaOrigineClicked()"></button>                
+        </div>
+        <div class="p-field p-col-8 p-pb-3 p-m-0">
+        </div>
+    </div>
+</form>

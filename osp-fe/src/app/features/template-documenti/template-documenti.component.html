@@ -1,0 +1,22 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Template documenti</h4>
+</div>
+
+<div class="p-grid p-nogutter p-jc-center p-m-2">
+    <ng-container *ngFor="let template of listaTemplate">
+        <p-card [header]="template.tipoTemplate.descrizione" subheader="Ultimo aggiornamento: {{template.dataModifica | formatDate}}" 
+            [style]="{width: '360px', height: '250px'}" class="card-template" styleClass="p-card-shadow p-shadow-12 p-m-2">
+            <p>Caricato da: <b>{{template.utenteModifica?template.utenteModifica.nome + " " + template.utenteModifica.cognome: "--"}}</b></p>
+            <ng-template pTemplate="footer">
+                <div class="p-d-flex p-jc-center">
+                    <button pButton label="Download" icon="pi pi-download" pTooltip="Download del template" [disabled]="!template.dataModifica"
+                        class="btn-custom-style double-button p-mr-1" (click)="onDownloadClicked(template)"></button>
+                    <button pButton label="Upload" icon="pi pi-upload" class="btn-custom-style double-button p-ml-1" pTooltip="Aggiorna il template"
+                        (click)="fileTemplate.click()"></button>
+                    <input #fileTemplate type="file" style="display: none;" (change)="onUploadClicked($event, template)" accept=".docx">                        
+                </div>       
+            </ng-template>
+        </p-card>
+    </ng-container> 
+</div>
+

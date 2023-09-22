@@ -1,0 +1,27 @@
+
+<p-tabView>
+    <p-tabPanel header="Dati Richiesta">
+        <app-gestione-pratica [pratica]="pratica" [readonly]="true" [isDettaglio]="true"></app-gestione-pratica>
+    </p-tabPanel>
+    <p-tabPanel header="Informazioni aggiuntive">
+        <app-informazioni-aggiuntive [pratica]="pratica"></app-informazioni-aggiuntive>
+    </p-tabPanel>
+    <p-tabPanel header="Pareri">
+        <app-pareri [pratica]="pratica"></app-pareri>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="pratica.idPraticaOriginaria || pratica.idProrogaPrecedente" header="Riferimenti pratica originaria">
+        <app-riferimenti-pratica [pratica]="pratica"></app-riferimenti-pratica>
+    </p-tabPanel>
+    <!--<p-tabPanel *ngIf="pratica.idProrogaPrecedente" header="Riferimenti proroga precedente">
+        <app-riferimenti-pratica [pratica]="pratica" [showPraticaOriginaria]="false"></app-riferimenti-pratica>
+    </p-tabPanel>-->
+    <p-tabPanel header="Area documentale">
+        <app-area-documentale [pratica]="pratica"></app-area-documentale>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="showStorico" header="Storico pratica">
+        <ng-template pTemplate="content">
+            <app-storico-pratica [pratica]="pratica" [isPraticaOrigine]="isPraticaOrigine"></app-storico-pratica>
+        </ng-template>
+    </p-tabPanel>
+</p-tabView>
+

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ include "osp.fullname" . }}-scheduler
+  labels:
+    {{- include "osp.labels" . | nindent 4 }}
+data:
+  SPRING_APPLICATION_JSON: |-
+    {
+      "spring": {
+        "profiles": "prod",
+        "datasource": {
+          "jdbc-url": "jdbc:postgresql://10.10.104.50:5432/OSP",
+          "username": "osp",
+          "password": "bnLx3x7x8THa",
+          "driverClassName": "org.postgresql.Driver"
+        },
+        "jpa": {
+          "hibernate": {
+            "ddl-auto": "none"
+          },
+          "properties": {
+            "hibernate": {
+              "dialect": "org.hibernate.spatial.dialect.postgis.PostgisDialect",
+              "format_sql": true,
+              "show_sql": false,
+              "type": "trace"
+            }
+          },
+          "show-sql": true
+        }
+      },
+      "elasticsearch": {
+        "hostAndPort": "security-master.elasticsearch:9200",
+        "username": "elastic",
+        "password": "V9P7hv$41y",
+        "indexName": "osp"
+      },
+      "quartz.frequencyInMin": 1
+    }
+    

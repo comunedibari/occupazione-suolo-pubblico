@@ -1,0 +1,94 @@
+<form [formGroup]="pareriForm">
+    <div *ngIf="pareriMunicipio.controls.length==0 && pareriPoliziaLocale.controls.length==0 && pareriAltri.controls.length==0" class="p-field p-col-12">
+        <h3>La pratica si trova nello stato {{pratica.statoPratica.descrizione}} non sono stati rilasciati i pareri</h3>
+    </div>
+
+    <div *ngIf="pareriForm.get('dataScadenzaDiniego').value">
+        <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+            <label for="txtDataScadenzaDiniego" class="p-text-bold">Data di scadenza diniego</label>
+            <p-calendar name='txtDataScadenzaDiniego' dateFormat="dd/mm/yy" formControlName="dataScadenzaDiniego" icon="pi pi-calendar" [showIcon]="true" styleClass="data-calendar readonly"></p-calendar>
+        </div>
+    </div>
+
+    <ng-container formArrayName="pareriMunicipio">
+        <ng-container *ngFor="let pareriMunicipioForm of pareriMunicipio.controls; let i=index">
+            <div [formGroup]="pareriMunicipioForm" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+                <div class="p-col-12">
+                    <legend class="legend">Informazioni richiesta integrazione</legend>
+                </div>
+                <div class="p-field p-col-12 p-sm-6 p-md-6 p-lg-6 p-pb-3 p-m-0">
+                    <label class="p-text-bold">Osservazioni municipio</label>
+                    <textarea pInputTextarea [rows]="3" formControlName="motivoRichiesta" class="text-area-no-resize stretch" [readonly]="true"></textarea>
+                </div>
+                <div *ngIf="pareriMunicipioForm.get('notaCittadino').value" class="p-field p-col-12 p-sm-6 p-md-6 p-lg-6 p-pb-3 p-m-0">
+                    <label class="p-text-bold">Note cittadino</label>
+                    <textarea pInputTextarea [rows]="3" formControlName="notaCittadino" class="text-area-no-resize stretch" [readonly]="true"></textarea>
+                </div>
+                <div class="p-field p-col-4 p-pb-3 p-m-0">
+                    <label for="txtinputDataScadenzaIntegrazione" class="p-text-bold">Data di scadenza integrazione</label>
+                    <p-calendar name='txtinputDataScadenzaIntegrazione' dateFormat="dd/mm/yy" formControlName="dataScadenzaIntegrazione" icon="pi pi-calendar" [showIcon]="true" styleClass="data-calendar readonly"></p-calendar>
+                </div>
+                <div class="p-field p-col-8 p-pb-3 p-m-0">
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <ng-container formArrayName="pareriPoliziaLocale">
+        <ng-container *ngFor="let pareriPoliziaLocaleForm of pareriPoliziaLocale.controls; let i=index">
+            <div [formGroup]="pareriPoliziaLocaleForm" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+                <div class="p-col-12">
+                    <legend class="legend">Parere {{getDescrizioneGruppo(pareriPoliziaLocaleForm.get('idGruppoDestinatarioParere').value)}}
+                      {{(pareriPoliziaLocaleForm.get('idStatoPratica').value === statoPraticaArchiviata) ? " - Ripristino Luoghi" : ""}}</legend>
+                </div>
+                <div class="p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <div class="p-field p-col-12 p-pb-3 p-pl-0 p-pr-0 p-m-0">
+                        <label for="inputCompetenzaPolizia" class="p-text-bold">Competenza</label>
+                        <p-selectButton name="inputCompetenzaPolizia" [options]="competenza" optionLabel="label" optionValue="value"
+                            formControlName="competenza" styleClass="button-select readonly"></p-selectButton>
+                    </div>
+                    <div class="p-field p-col-12 p-pl-0 p-pr-0 p-m-0">
+                        <label for="inputParerePolizia" class="p-text-bold">Parere</label>
+                        <p-selectButton name="inputParerePolizia" [options]="parere" optionLabel="label" optionValue="value"
+                            formControlName="parere" styleClass="button-select readonly"></p-selectButton>
+                    </div>
+                </div>
+                <div class="p-col-12 p-sm-6 p-md-6 p-lg-8 p-pb-3 p-m-0">
+                    <div class="p-field p-col-12 p-pl-0 p-pr-0 p-m-0">
+                        <label class="p-text-bold">Note</label>
+                        <textarea pInputTextarea [rows]="5" formControlName="note" class="text-area-no-resize stretch" [readonly]="true"></textarea>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <ng-container formArrayName="pareriAltri">
+        <ng-container *ngFor="let pareriAltriForm of pareriAltri.controls; let i=index">
+            <div [formGroup]="pareriAltriForm" class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2">
+                <div class="p-col-12">
+                    <legend class="legend">Parere {{getDescrizioneGruppo(pareriAltriForm.get('idGruppoDestinatarioParere').value)}}</legend>
+                </div>
+                <div class="p-col-12 p-sm-6 p-md-6 p-lg-4 p-pb-3 p-m-0">
+                    <div class="p-field p-col-12 p-pb-3 p-pl-0 p-pr-0 p-m-0">
+                        <label for="inputCompetenzaUtd" class="p-text-bold">Competenza</label>
+                        <p-selectButton name="inputCompetenzaUtd" [options]="competenza" optionLabel="label" optionValue="value"
+                            formControlName="competenza" styleClass="button-select readonly"></p-selectButton>
+                    </div>
+                    <div class="p-field p-col-12 p-pl-0 p-pr-0 p-m-0">
+                        <label for="inputParereUtd" class="p-text-bold">Parere</label>
+                        <p-selectButton name="inputParereUtd" [options]="parere" optionLabel="label" optionValue="value"
+                            formControlName="parere" styleClass="button-select readonly"></p-selectButton>
+                    </div>
+                </div>
+                <div class="p-col-12 p-sm-6 p-md-6 p-lg-8 p-pb-3 p-m-0">
+                    <div class="p-field p-col-12 p-pl-0 p-pr-0 p-m-0">
+                        <label class="p-text-bold">Note</label>
+                        <textarea pInputTextarea [rows]="5" formControlName="note" class="text-area-no-resize stretch" [readonly]="true"></textarea>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+</form>

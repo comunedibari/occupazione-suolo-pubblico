@@ -1,0 +1,19 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Pratiche archiviate</h4>
+</div>
+  
+<div class="p-m-3">
+    <app-table-prime-ng
+        [dataSource]="this.dataSource" 
+        [columnSchema]="this.columnSchema" 
+        [actions]="this.actions"
+        [initSortColumn]="initSortColumn" 
+        [directionSortColumn]="directionSortColumn"
+        (onEvent)="this.onTableEvent($event)"
+        [titleTable]="titleTable"
+        [exportName]="exportName"
+        [globalFilters]="globalFilters"
+        [customSort]=true
+    >
+    </app-table-prime-ng>
+</div>

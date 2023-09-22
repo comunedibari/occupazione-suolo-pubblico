@@ -1,0 +1,78 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Pratiche da rigettare</h4>
+</div>
+
+<div class="p-m-3">
+    <app-table-prime-ng
+        [dataSource]="this.dataSource"
+        [columnSchema]="this.columnSchema"
+        [actions]="this.actions"
+        [initSortColumn]="initSortColumn"
+        [directionSortColumn]="directionSortColumn"
+        (onEvent)="this.onTableEvent($event)"
+        [titleTable]="titleTable"
+        [exportName]="exportName"
+        [globalFilters]="globalFilters"
+        [customSort]=true
+    >
+    </app-table-prime-ng>
+</div>
+
+<p-dialog header="Upload determina di rigetto:" [(visible)]="showUploadDialog" (onHide)="onCloseUploadDialog()" styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+    <div class="p-grid p-m-2">
+        <div class="p-col-12">
+            <div class="p-field">
+                <label class="p-text-bold">Numero determina: *</label>
+                <input type="text" pInputText [(ngModel)]="this.identificativoDetermina" class="stretch">
+            </div>
+
+            <div class="p-field">
+                <label for="dataDetermina" class="p-text-bold">Data emissione: *</label><br>
+                <p-calendar name='dataDetermina' dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+                    placeholder="dd/mm/yyyy" [(ngModel)]="dataDetermina" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [maxDate]="limitData"
+                    inputId="dataDetermina" styleClass="data-calendar">
+                </p-calendar>
+            </div>
+
+            <div class="p-field">
+                <label class="p-text-bold">Upload determina *</label>
+
+                <app-upload-file
+                    [pratica]="this.pratica"
+                    [mode]="uploadMode"
+                    [destinazioneAllegato]="destinazioneAllegato"
+                    [filtroStatoPratica]="filtroStatoPratica"
+                    [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+                    [fileClearToggle]="showUploadDialog"
+                    (onDocUploaded)="onUploadedFile($event)"
+                    (fileInCheckout)="fileInCheckout($event)"
+                >
+                </app-upload-file>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+            <div class="p-d-flex p-col-12 p-jc-end">
+                <button pButton label="Annulla" class="btn-custom-style"
+                    (click)="this.showUploadDialog = false"></button>
+                <button pButton label="Conferma" (click)="inviaDeterminaRigetto()" [disabled]="!this.identificativoDetermina.trim() || !dataDetermina || this.isFileInCheckout" class="btn-custom-style"></button>
+            </div>
+	</p-footer>
+</p-dialog>
+
+<p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+  <div class="p-grid p-m-2">
+    <div class="p-col-12">
+      <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+      <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+      <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+    </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+              (click)="inviaDeterminaRigetto()"></button>
+      <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+    </div>
+  </p-footer>
+</p-dialog>

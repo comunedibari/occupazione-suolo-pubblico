@@ -1,0 +1,121 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">Necessarie integrazioni</h4>
+</div>
+
+  <div class="p-m-3">
+    <app-table-prime-ng
+      [dataSource]="this.dataSource"
+      [columnSchema]="this.columnSchema"
+      [actions]="this.actions"
+      [initSortColumn]="initSortColumn"
+      [directionSortColumn]="directionSortColumn"
+      (onEvent)="this.onTableEvent($event)"
+      [titleTable]="titleTable"
+      [exportName]="exportName"
+      [globalFilters]="globalFilters"
+      [customSort]=true
+    >
+    </app-table-prime-ng>
+  </div>
+
+  <p-dialog header="Integrazione Documenti:" [(visible)]="showIntegrazioneDialog" (onHide)="closeIntegrazioneDialog()" styleClass="dialog-1050" [draggable]="false" [resizable]="false" [modal]="true">
+    <div *ngIf="isPreavvisoDiniego()">
+      <div class="p-field p-col-12 p-m-0">
+        <div class="p-col-12">
+          <label class="p-text-bold label">Risposta al diniego: *</label>
+          <textarea pInputTextarea [rows]="5" [(ngModel)]="this.noteRispostaDiniego" class="text-area-no-resize stretch p-mt-1"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid p-m-1">
+        <div class="p-field" style="width: 100%;">
+            <label class="p-text-bold">Upload Integrazione Documenti *</label>
+            <app-upload-file
+              [filtroStatoPratica]="pratica?.statoPratica?.id"
+              [fileClearToggle]="showIntegrazioneDialog"
+              [pratica]="this.pratica"
+              [mode]="uploadMode"
+              [destinazioneAllegato]="destinazioneAllegato"
+              (mandatoryDocuments)="onMandatoryDocuments($event)"
+              (onDocUploaded)="onUploadedFile($event)"
+            >
+            </app-upload-file>
+          </div>
+    </div>
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style"
+          (click)="closeIntegrazioneDialog()"></button>
+        <button pButton label="Conferma" class="btn-custom-style"
+          (click)="aggiornaStatoPratica()" [disabled]="isConfirmDisabled()"></button>
+      </div>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog header="Rettifica le date di occupazione:" [(visible)]="showRettificaDate" (onHide)="showRettificaDate = false" styleClass="dialog-custom-650" [draggable]="false" [resizable]="false" [modal]="true">
+    <div class="p-grid p-m-2">
+      <div class="p-field p-mr-6 p-mb-4 p-mt-2">
+        <label for="dataInizioRettifica" class="p-text-bold">Data inizio occupazione: *</label><br>
+        <p-calendar name='dataInizioRettifica' dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+            placeholder="dd/mm/yyyy" [(ngModel)]="dataInizioRettifica" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [minDate]="limitData"
+            inputId="dataInizioRettifica" styleClass="data-calendar" (onClose)="onPeriodOccupazioneChange()">
+        </p-calendar>
+      </div>
+      <div class="p-field p-mr-3 p-mb-4 p-mt-2">
+        <label for="dataFineRettifica" class="p-text-bold">Data scadenza occupazione: *</label><br>
+        <p-calendar name='dataFineRettifica' dateFormat="dd/mm/yy" [yearNavigator]="true" [yearRange]="calculateYearRange()" [monthNavigator]="true"
+            placeholder="dd/mm/yyyy" [(ngModel)]="dataFineRettifica" appendTo="body" icon="pi pi-calendar" [showIcon]="true" [minDate]="limitData"
+            inputId="dataFineRettifica" styleClass="data-calendar" (onClose)="onPeriodOccupazioneChange()">
+        </p-calendar>
+      </div>
+      <div class="p-field p-mt-0 p-mb-3">
+        <p-message *ngIf="validDateRange()" severity="error" text="La data scadenza occupazione non può essere inferiore alla data inizio occupazione"></p-message>
+      </div>
+      <div class="p-field p-mr-6">
+        <label for="oraInizioRettifica" class="p-text-bold">Ora inizio occupazione:</label><br>
+        <p-calendar name='oraInizioRettifica' timeOnly="true" showTime="true" hourFormat="24"
+            placeholder="hh:mm" [(ngModel)]="oraInizioRettifica" appendTo="body" icon="pi pi-clock" [showIcon]="true"
+            inputId="oraInizioRettifica" styleClass="data-calendar" (onClose)="onOrarioChange()">
+        </p-calendar>
+      </div>
+      <div class="p-field p-mr-3">
+        <label for="oraFineRettifica" class="p-text-bold">Ora scadenza occupazione:</label><br>
+        <p-calendar name='oraFineRettifica' timeOnly="true" showTime="true" hourFormat="24"
+            placeholder="hh:mm" [(ngModel)]="oraFineRettifica" appendTo="body" icon="pi pi-clock" [showIcon]="true"
+            inputId="oraFineRettifica" styleClass="data-calendar" (onClose)="onOrarioChange()">
+        </p-calendar>
+      </div>
+      <div class="p-field p-mt-0 p-mb-1">
+        <p-message *ngIf="validOrariRange()" severity="error" text="L'intervallo tra ora inizio e ora scadenza occupazione deve essere di almeno un'ora"></p-message>
+        <p-message *ngIf="!validPreviousInterval() && this.dataInizioRettifica" severity="error" text="L'intervallo tra la data di inizio precedentemente richiesta e la nuova data deve essere di almeno un'ora"></p-message>
+      </div>
+    </div>
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style"
+          (click)="closeRettificaDateDialog()"></button>
+        <button pButton label="Conferma" class="btn-custom-style"
+          (click)="inviaRettificaDate()"
+          [disabled]="!dataInizioRettifica || !dataFineRettifica
+          || orarioDisabled || validDateRange() || validOrariRange()
+          || !validPreviousInterval()"></button>
+      </div>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+    <div class="p-grid p-m-2">
+        <div class="p-col-12">
+            <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+            <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+            <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+        </div>
+    </div>
+    <p-footer>
+        <div class="p-d-flex p-col-12 p-jc-end">
+        <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+            (click)="aggiornaStatoPratica()"></button>
+        <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+        </div>
+    </p-footer>
+  </p-dialog>

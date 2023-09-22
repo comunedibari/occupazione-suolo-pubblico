@@ -1,0 +1,153 @@
+<p-fileUpload #fp *ngIf="isMultipleFile" customUpload="true" (uploadHandler)="uploadFiles()" multiple="multiple"
+  [showCancelButton]="false" [disabled]="this.readonly"
+  [accept]="acceptedExtensions" maxFileSize="20000000" [fileLimit]="tipoDocumenti.length"
+  (onSelect)="checkDuplicateFiles($event)"
+  (onRemove)="removeSingleFile($event)"
+  [invalidFileLimitMessageSummary]="invalidFileLimitMessageSummary"
+  [invalidFileLimitMessageDetail]="invalidFileLimitMessageDetail"
+  [invalidFileSizeMessageSummary]="invalidFileSizeMessageSummary"
+  [invalidFileSizeMessageDetail]="invalidFileSizeMessageDetail"
+  [invalidFileTypeMessageSummary]="invalidFileTypeMessageSummary"
+  [invalidFileTypeMessageDetail]="invalidFileTypeMessageDetail"
+  >
+
+        <ng-template pTemplate="toolbar">
+          <div class="upload-file-toolbar">
+              <span>
+                {{!this.readonly ? 'Seleziona file da caricare:' : 'Documentazione pratica:'}}
+                <i *ngIf="!this.readonly" class="pi pi-question-circle icon-question" [pTooltip]="tooltipDocs"></i>
+              </span>
+          </div>
+          <button *ngIf="isNewInstance && !this.readonly" pButton label="Invia richiesta" icon="pi pi-send" class="btn-custom-style p-ml-2"
+            (click)="inviaRichiesta()" [disabled]="isButtonInviaDisabled()">
+          </button>
+        </ng-template>
+
+        <ng-template let-file pTemplate="file" let-i="index">
+          <div class="p-grid p-m-2">
+            <div class="p-col-1"><img src="assets/icona-documento.png" [width]="fp.previewWidth"/></div>
+            <div class="p-col-3 spanEllipsis" style="word-wrap: break-word;">{{file.name}}</div>
+            <div [ngClass]="fileTypeClass">
+              <p-dropdown class="dropdown-type-doc" [options]="tipoDocumenti" [(ngModel)]="documentiSelezionati[i]"
+              optionValue="tipoAllegato.id" optionLabel="tipoAllegato.descrizione" [scrollHeight]="scrollHeightTipoFile" optionDisabled="disabled"
+              (onChange)="onChangeDropDown($event)" placeholder="Seleziona tipologia documento">
+                <ng-template let-doc pTemplate="item">
+                  <div>
+                      <div pTooltip="{{doc.tipoAllegato.descrizioneEstesa}}">{{doc.tipoAllegato.descrizione}} {{doc.flagObbligatorio && !nonCompetenza ? '(*)' : ''}}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+            <div [ngClass]="textAreaClass">
+              <input *ngIf="isTestoLibero(documentiSelezionati[i])" type="text" pInputText [(ngModel)]="customLabel[i]"
+                (keyup)="checkSpecialCharactersFieldName(i)" pTooltip="Definire la tipologia del documento">
+            </div>
+            <div class="p-col-1">
+              <button pTooltip="RIMUOVI" class="btn-custom-style p-button-rounded btn-function-style p-m-1" type="button" icon="pi pi-times" pButton (click)="fp.remove($event,i);onRemoveFile(i);" [disabled]="fp.uploading"></button>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="content">
+          <ng-container *ngIf="uploadedFiles.length && !loading">
+            <hr *ngIf="fp.files && fp.files.length">
+            <div class="p-grid p-m-2" *ngFor="let element of uploadedFiles; let i = index;">
+              <div class="p-col-fixed" style="width: 66px;">
+                <img class="center-img" src="assets/icona-documento.png" [width]="fp.previewWidth"/>
+              </div>
+              <div class="p-col-3">
+                <span class="spanEllipsis center-span" pTooltip="{{element.nomeFile}} - rev. {{element.revisione}}" style="word-wrap: break-word;">{{element.nomeFile}} - rev. {{element.revisione}}</span>
+              </div>
+              <div class="p-col">
+                <input *ngIf="!element.nota"class="spanEllipsis stretch" [readonly]="true" type="text"
+                    pInputText [value]="element.tipoAllegato.descrizione" [pTooltip]="element.tipoAllegato.descrizioneEstesa">
+                <input *ngIf="element.nota" class="spanEllipsis stretch" [readonly]="true" type="text"
+                    pInputText [value]="element.nota">
+              </div>
+              <div class="p-col-2">
+                <span class="spanEllipsis center-span" pTooltip="N. Protocollo: {{getNumeroProtocollo(element) | emptyValue}}">{{getNumeroProtocollo(element) | emptyValue}}</span>
+              </div>
+              <div class="p-md-2 p-col-1">
+                <span class="spanEllipsis center-span" pTooltip="Data caricamento: {{element.dataInserimento | formatDate }}">{{element.dataInserimento | formatDate:true}}</span>
+              </div>
+              <div class="p-col-fixed" style="width: 62px;">
+                <button pTooltip="DOWNLOAD" class="btn-custom-style p-button-rounded btn-function-style p-m-1" type="button" icon="pi pi-download" pButton (click)="downloadDoc(element)"></button>
+              </div>
+              <div class="p-col-fixed" style="width: 62px;" *ngIf="isDeleteVisible">
+                <button pTooltip="RIMUOVI" class="btn-custom-style p-button-rounded btn-function-style p-m-1"
+                        type="button" icon="pi pi-times" pButton (click)="removeDoc(i, element)">
+                </button>
+              </div>
+            </div>
+          </ng-container>
+
+      </ng-template>
+</p-fileUpload>
+
+<p-fileUpload #fp *ngIf="isSingleFile" customUpload="true" (uploadHandler)="uploadFiles()" [showCancelButton]="false"
+  [accept]="acceptedExtensions" maxFileSize="20000000" [fileLimit]="1" (onSelect)="selectedFile($event)" (onRemove)="selectedFile($event)"
+  [disabled]="disableUpload"
+  [invalidFileLimitMessageSummary]="invalidFileLimitMessageSummary"
+  [invalidFileLimitMessageDetail]="invalidFileLimitMessageDetail"
+  [invalidFileSizeMessageSummary]="invalidFileSizeMessageSummary"
+  [invalidFileSizeMessageDetail]="invalidFileSizeMessageDetail"
+  [invalidFileTypeMessageSummary]="invalidFileTypeMessageSummary"
+  [invalidFileTypeMessageDetail]="invalidFileTypeMessageDetail"
+  >
+
+        <ng-template pTemplate="toolbar">
+          <div class="upload-single-file-toolbar">
+              <span>Seleziona file:</span>
+          </div>
+          <button *ngIf="isAttesaPagamento && !this.readonly" pButton label="Invia ricevuta" icon="pi pi-send" class="btn-custom-style p-ml-2"
+            (click)="inviaRichiesta()" [disabled]="!uploadedFiles.length || loading">
+          </button>
+        </ng-template>
+
+        <ng-template let-file pTemplate="file" let-i="index">
+          <div class="p-grid p-m-2">
+            <div class="p-col-4 spanEllipsis" pTooltip="{{file.name}}">{{file.name}}</div>
+            <div class="p-col-6">
+              <p-dropdown class="dropdown-type-doc" [options]="tipoDocumenti" [(ngModel)]="documentiSelezionati[i]"
+                optionValue="tipoAllegato.id" optionLabel="tipoAllegato.descrizione" optionDisabled="disabled"
+                (onChange)="onChangeDropDown($event)" placeholder="Seleziona tipologia documento">
+                <ng-template let-doc pTemplate="item">
+                  <div>
+                      <div pTooltip="{{doc.tipoAllegato.descrizioneEstesa}}">{{doc.tipoAllegato.descrizione}} {{doc.flagObbligatorio && !nonCompetenza ? '(*)' : ''}}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+            <div class="p-col-2">
+              <button pTooltip="RIMUOVI" class="btn-custom-style p-button-rounded btn-function-style p-m-1" type="button" icon="pi pi-times" pButton (click)="fp.remove($event,i);onRemoveFile(i);"></button>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="content">
+          <ng-container *ngIf="uploadedFiles.length && !loading">
+            <hr *ngIf="uploadedFiles && uploadedFiles.length">
+            <div class="p-grid p-m-2" *ngFor="let element of uploadedFiles; let i = index;">
+              <div [ngClass]="{
+                'p-col-4': readonly,
+                'p-col-3': !readonly
+              }"><span class="spanEllipsis" pTooltip="{{element.nomeFile}} - rev. {{element.revisione}}">{{element.nomeFile}} - rev. {{element.revisione}}</span></div>
+              <div [ngClass]="{
+                'p-col-6': readonly,
+                'p-col-5': !readonly
+              }">
+                <input class="spanEllipsis stretch" [readonly]="true" type="text" pInputText [value]="element.tipoAllegato.descrizione" [pTooltip]="element.tipoAllegato.descrizioneEstesa">
+              </div>
+              <div class="p-col-2">
+                <button pTooltip="DOWNLOAD" class="btn-custom-style p-button-rounded btn-function-style p-m-1" type="button" icon="pi pi-download" pButton (click)="downloadFile(i)"></button>
+              </div>
+              <div class="p-col-2" *ngIf="isDeleteVisible">
+                <button pTooltip="RIMUOVI" class="btn-custom-style p-button-rounded btn-function-style p-m-1"
+                        type="button" icon="pi pi-times" pButton (click)="removeDoc(i, element)">
+                </button>
+              </div>
+            </div>
+          </ng-container>
+
+      </ng-template>
+</p-fileUpload>

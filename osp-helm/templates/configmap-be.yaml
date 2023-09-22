@@ -1,0 +1,238 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ include "osp.fullname" . }}-be
+  labels:
+    {{- include "osp.labels" . | nindent 4 }}
+data:
+  SPRING_APPLICATION_JSON: |-
+    {
+      "server": {
+        "servlet": {
+          "context-path": "/api/${spring.application.name}"
+        },
+        "port": 8080,
+        "error": {
+          "include-message": "always",
+          "include-binding-errors": "always",
+          "include-stacktrace": "ON_PARAM",
+          "include-exception": false
+        }
+      },
+      "logging": {
+        "file": {
+          "path": "./"
+        },
+        "level": {
+          "root": "ERROR",
+          "org": {
+            "apache": {
+              "fop": "ERROR"
+            },
+            "docx4j": "ERROR"
+          }
+        }
+      },
+      "spring": {
+        "sql": {
+          "init": {
+            "platform": "postgresql",
+            "encoding": "UTF-8",
+            "mode": "never"
+          }
+        },
+        "datasource": {
+          "url": "jdbc:postgresql://10.10.104.50:5432/OSP",
+          "username": "osp",
+          "password": "bnLx3x7x8THa",
+          "driverClassName": "org.postgresql.Driver"
+        },
+        "jpa": {
+          "hibernate": {
+            "ddl-auto": "none"
+          },
+          "properties": {
+            "hibernate": {
+              "dialect": "org.hibernate.spatial.dialect.postgis.PostgisDialect",
+              "format_sql": true,
+              "show_sql": true,
+              "type": "trace"
+            }
+          },
+          "show-sql": true
+        },
+        "application": {
+          "name": "osp"
+        },
+        "mail": {
+          "host": "smtp6.ilger.com",
+          "port": 465,
+          "username": "gpc5363",
+          "password": "YkXThHwSxp8P",
+          "properties": {
+            "mail": {
+              "smtp": {
+                "auth": true,
+                "connectiontimeout": 5000,
+                "timeout": 5000,
+                "writetimeout": 5000,
+                "starttls": {
+                  "enable": true
+                }
+              }
+            }
+          }
+        },
+        "quartz": {
+          "job-store-type": "memory"
+        }
+      },
+      "org.quartz.jobStore.class": "org.quartz.simpl.RAMJobStore",
+      "management": {
+        "endpoints": {
+          "web": {
+            "exposure": {
+              "include": "health,info"
+            }
+          }
+        },
+        "health": {
+          "mail": {
+            "enabled": false
+          }
+        }
+      },
+      "springdoc": {
+        "api-docs": {
+          "enabled": true
+        },
+        "show": {
+          "actuator": true
+        }
+      },
+      "pec": {
+        "hostname": "mail.pec.rupar.puglia.it",
+        "port": 465
+      },
+      "pecM1": {
+        "auth": {
+          "username": "municipio1.comunebari@pec.rupar.puglia.it",
+          "password": "186sc244A!"
+        }
+      },
+      "pecM2": {
+        "auth": {
+          "username": "municipio2.comunebari@pec.rupar.puglia.it",
+          "password": "1p7iC588!"
+        }
+      },
+      "pecM3": {
+        "auth": {
+          "username": "municipio3.comunebari@pec.rupar.puglia.it",
+          "password": "Catanese3@"
+        }
+      },
+      "pecM4": {
+        "auth": {
+          "username": "municipio4.comunebari@pec.rupar.puglia.it",
+          "password": "DiceMbre_37s!"
+        }
+      },
+      "pecM5": {
+        "auth": {
+          "username": "municipio5.comunebari@pec.rupar.puglia.it",
+          "password": "Italia2022?"
+        }
+      },
+      "osp": {
+        "app": {
+          "jwtSecret": "ospSecretKey",
+          "jwtExpirationMs": 86400000,
+          "mail": {
+            "from": "gpc@gmail.com",
+            "send.schedule.cron.expression": "0 * * ? * *"
+          },
+          "format": {
+            "date": "dd-MM-yyyy",
+            "time": "HH:mm:ss",
+            "date-time": "${osp.app.format.date} ${osp.app.format.time}"
+          },
+          "civiliario": {
+            "api": {
+              "baseurl": "http://10.10.85.157/er",
+              "user": "almaviva",
+              "pass": "almaviva",
+              "timeout": 300
+            },
+            "maxResult": 10
+          },
+          "protocollo": {
+            "api": {
+              "mocked": false,
+              "baseurl": "http://middleware-protocolli.protocolli.svc.cluster.local:8080",
+              "codiceAmministrazione": "c_a662"
+            }
+          },
+          "richiesta": {
+            "ore.min": 1
+          },
+          "richiestaIntegrazione": {
+            "numMax": 3
+          },
+          "proroga": {
+            "edilizia": {
+              "numeroMax": 2,
+              "giorniMax": 365
+            },
+            "altro": {
+              "numeroMax": 2,
+              "giorniTotMax": 365
+            }
+          },
+          "scadenzario": {
+            "scheduler": {
+              "restict": false,
+              "host": "osp-be-scheduler"
+            },
+            "dateOccupazione": {
+              "modifica.giorni": 10,
+              "max.giorni": 365,
+              "dataInizio": {
+                "distanza.min.giorni": 15
+              }
+            },
+            "termineProcedimentale.giorni": 60,
+            "termineProcedimentale.preavviso.giorni": 5,
+            "integrazione.giorni": 45,
+            "preavvisoDiniego.giorni": 10,
+            "pagamento.giorni": 30,
+            "concessioneTemporanea.scadenza.pravviso.giorni": 20,
+            "rettificaDate.giorni": 10,
+            "alertRettificaDate.giorni": 2
+          },
+          "template": {
+            "placeholder": {
+              "start": "+++=",
+              "end": "+++"
+            }
+          },
+          "dashboard": {
+            "default": "https://kibana.comune.bari.it/s/gestionale-occupazione-suolo-pubblico/app/dashboards#/view/be08c150-5c4f-11ed-9781-c3cbd4f9841d?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-1y%2Fd%2Cto%3Anow))&show-time-filter=true%22",
+            "m1": "https://kibana.comune.bari.it/s/gestionale-occupazione-suolo-pubblico/app/dashboards#/view/eda9c780-d1eb-11ed-b937-0df5b8151acc?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-1y%2Fd%2Cto%3Anow))&show-time-filter=true&hide-filter-bar=true%22",
+            "m2": "https://kibana.comune.bari.it/s/gestionale-occupazione-suolo-pubblico/app/dashboards#/view/e3d30d60-d1ec-11ed-b937-0df5b8151acc?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-1y%2Fd%2Cto%3Anow))&show-time-filter=true&hide-filter-bar=true%22",
+            "m3": "https://kibana.comune.bari.it/s/gestionale-occupazione-suolo-pubblico/app/dashboards#/view/0f000fb0-d1ed-11ed-b937-0df5b8151acc?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-1y%2Fd%2Cto%3Anow))&show-time-filter=true&hide-filter-bar=true%22",
+            "m4": "https://kibana.comune.bari.it/s/gestionale-occupazione-suolo-pubblico/app/dashboards#/view/c789ec80-d1ee-11ed-b937-0df5b8151acc?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-1y%2Fd%2Cto%3Anow))&show-time-filter=true&hide-filter-bar=true%22",
+            "m5": "https://kibana.comune.bari.it/s/gestionale-occupazione-suolo-pubblico/app/dashboards#/view/12302f10-d1ef-11ed-b937-0df5b8151acc?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-1y%2Fd%2Cto%3Anow))&show-time-filter=true&hide-filter-bar=true%22"
+          },
+          "senderMailMunicipio": {
+            "1": "municipio1.comunebari@pec.rupar.puglia.it",
+            "2": "municipio2.comunebari@pec.rupar.puglia.it",
+            "3": "municipio3.comunebari@pec.rupar.puglia.it",
+            "4": "municipio4.comunebari@pec.rupar.puglia.it",
+            "5": "municipio5.comunebari@pec.rupar.puglia.it"
+          }
+        }
+      },
+      "flagControlloAllegati": true,
+      "maxDimAllegatiProtocolloKb": 29296.9
+    }

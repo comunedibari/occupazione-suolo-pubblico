@@ -1,0 +1,21 @@
+<div class="p-fluid p-formgrid p-grid p-inputtext-lg p-m-2" >
+    <div class="p-col-12">
+        <legend class="legend">Storico pratica</legend>
+    </div>
+
+    <div class="p-field p-col-12">
+        <app-table-prime-ng
+            [dataSource]="this.dataSource" 
+            [columnSchema]="this.columnSchema" 
+            [actions]="this.actions"
+            [initSortColumn]="initSortColumn" 
+            [directionSortColumn]="directionSortColumn"
+            (onEvent)="this.onTableEvent($event)"              
+            [showToolbar]=false
+            [showCaption]=false
+            [customSort]=true
+        >
+        </app-table-prime-ng>
+    </div>
+
+</div>

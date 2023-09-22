@@ -1,0 +1,54 @@
+spring:
+  quartz:
+    job-store-type: memory
+    jdbc:
+      initialize-schema: never
+  profiles:
+    active: prod
+---
+spring:
+  profiles: dev
+
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5433/osp
+    username: usr
+    password: psdw
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
+        format_sql: true
+        show_sql: false
+        type: trace
+    show-sql: true
+
+elasticsearch.hostAndPort: localhost:9200
+elasticsearch.indexName: osp
+quartz.frequencyInMin: 1
+
+---
+spring:
+  profiles: prod
+
+  datasource:
+    jdbc-url: jdbc:postgresql://postgres.cdba-cruscotto-asset.svc.cluster.local:5432/osp
+    username: usr
+    password: pswd
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
+        format_sql: true
+        show_sql: false
+        type: trace
+    show-sql: true
+
+elasticsearch.hostAndPort: elasticsearch-master.elasticsearch-dev.svc.cluster.local:9200
+elasticsearch.indexName: osp
+quartz.frequencyInMin: 1

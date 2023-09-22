@@ -1,0 +1,197 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+  <h4 class="intestazione-componente">{{this.title}}</h4>
+</div>
+
+<div class="p-m-3">
+  <app-table-prime-ng
+    [dataSource]="this.dataSource"
+    [columnSchema]="this.columnsSchema"
+    [actions]="this.actions"
+    [initSortColumn]="initSortColumn"
+    [directionSortColumn]="directionSortColumn"
+    (onEvent)="this.onTableEvent($event)"
+    [titleTable]="titleTable"
+    [exportName]="exportName"
+    [globalFilters]="this.globalFilters"
+    [customSort]=true
+  >
+  </app-table-prime-ng>
+</div>
+
+<p-dialog header="Validazione pratica:" [(visible)]="showValidaDialog" (onHide)="closeValidaDialog()"
+  styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+  <div *ngIf="!disableCheckbox && !isRinunciaConcessione()" class="p-md-4 p-lg-3 p-sm-12">
+    <p-radioButton name="verificaOccupazione" label="Verifica area occupazione su mappa" [value]="getVerificaOccupazione()"
+      [(ngModel)]="sceltaValidazione" class="customRadioButton" [disabled]="disableCheckbox" styleClass="checkbox-form"
+      (click)="onApriMappaClicked()"></p-radioButton>
+    <p-radioButton name="saltaVerifica" label="Salta verifica area occupazione" [value]="getSaltaVerificaOccupazione()"
+      [(ngModel)]="sceltaValidazione" class="customRadioButton" [disabled]="disableCheckbox" styleClass="checkbox-form">
+    </p-radioButton>
+    <p-radioButton name="occupazioneCorretta" label="Area ingombro occupazione corretta" [value]="getOccupazioneCorretta()"
+      [(ngModel)]="sceltaValidazione" class="customRadioButton" [disabled]="disableCheckbox" styleClass="checkbox-form">
+    </p-radioButton>
+  </div>
+  <div *ngIf="isFlagEsenzioneModificato && !isPraticaEsente" class="p-md-4 p-lg-3 p-sm-12">
+    <p-checkbox name="riabilitaEsenzioneMarcaDaBollo" label="Dichiara esenzione marca da bollo" [binary]="true"
+      [(ngModel)]="riabilitaEsenzioneMarcaDaBollo" class="customRadioButton" styleClass="checkbox-form">
+    </p-checkbox>
+  </div>
+
+  <div>
+    Confermi di richiedere parere/necessaria integrazione per la pratica num. {{this.numeroProtocollo}} ?
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Integrazione" class="btn-custom-style btn-dialog-validazione-pratica p-mr-1" style="height: 36px; width: 160px !important;"
+        (click)="showIntegrazione()" [disabled]="!sceltaValidazione">
+          <span class="p-ink"></span>
+          <span class="p-button-icon p-button-icon-left pi pi-times" aria-hidden="true"></span>
+        </button>
+        <button *ngIf="!isRinunciaConcessione()" pButton label="Richiesta parere Polizia Locale" class="btn-custom-style btn-dialog-validazione-pratica" style="height: 36px; width: 259px !important;"
+        (click)="aggiornaRichiestaPareri()" [disabled]="!sceltaValidazione">
+          <span class="p-button-icon p-button-icon-left pi pi-check" aria-hidden="true"></span>
+        </button>
+        <button *ngIf="isRinunciaConcessione()" pButton label="Approva" class="btn-custom-style" style="height: 36px; width: 160px !important;"
+          (click)="approvaPratica()" [disabled]="!sceltaValidazione">
+          <span class="p-button-icon p-button-icon-left pi pi-check" aria-hidden="true"></span>
+        </button>
+      </div>
+    </p-footer>
+  </div>
+</p-dialog>
+
+<p-dialog header="Necessaria integrazione:" [(visible)]="showIntegrazioneDialog" (onHide)="closeIntegrazioneDialog()" styleClass="dialog-600" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-2">
+      <div class="p-col-12">
+        <div class="p-field" *ngIf="!isRinunciaConcessione() || !isFaseIntegrazioneMassimaRaggiunta">
+          <label *ngIf="!isFaseDiniego" class="p-text-bold" for="Note">Note: *</label>
+          <textarea id="Note" *ngIf="!isFaseDiniego" pInputTextarea [rows]="5" [(ngModel)]="this.noteIstruttoreMunicipio" class="text-area-no-resize stretch"></textarea>
+        </div>
+        <div class="p-field" *ngIf="!isRinunciaConcessione() && isFaseIntegrazioneMassimaRaggiunta && !isFaseDiniego">
+          <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+          <label class="p-text-bold">Attenzione: la pratica ha già subito il numero massimo di integrazioni.  Al prossimo invio si procederà al preavviso di diniego.</label>
+        </div>
+        <div class="p-field" *ngIf="isRinunciaConcessione() && isFaseIntegrazioneMassimaRaggiunta">
+          <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+          <label class="p-text-bold">
+            Attenzione: la pratica ha già subito il numero massimo di integrazioni. Non è possibile richiedere un'ulteriore integrazione.
+            Cliccare su "Annulla" e procedere con l'approvazione della rinuncia.
+          </label>
+        </div>
+        <div class="p-field p-d-flex" *ngIf="isFaseDiniego">
+          <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text p-mr-2"></button>
+          <label class="p-text-bold">Attenzione: la pratica ha già subito una fase di diniego. Confermando l'operazione, la pratica passerà nello stato "Pratica da rigettare".</label>
+        </div>
+        <p-checkbox *ngIf="isEsenteOnInit && !isFlagEsenzioneModificato" class="p-mt-1" name="checkBoxEsenzione" id="checkBoxEsenzione" [binary]="true" [(ngModel)]="annullaEsenzioneMarcaDaBollo"
+          label="Annulla dichiarazione esenzione marca da bollo">
+        </p-checkbox>
+        <div class="p-field p-mt-2" *ngIf="!isFaseDiniego && (!isRinunciaConcessione() || !isFaseIntegrazioneMassimaRaggiunta)">
+          <label class="p-text-bold">Upload documento</label>
+          <app-upload-file
+            [pratica]="this.pratica"
+            [fileClearToggle]="showIntegrazioneDialog"
+            [mode]="uploadMode"
+            [destinazioneAllegato]="destinazioneAllegato"
+            [acceptedExtensions]="'.pdf,.p7m,.zip,.rar,.7z'"
+            (fileInCheckout)="fileInCheckout($event)"
+            (idDocUploaded)="getIdDocIntegrazioneUploaded($event)"
+            [richistaIntegrazioneFiles]="newRichiestaIntegrazioneUploadedFiles"
+            (onDocUploaded)="onRichiestaIntegrazioneUploadedFile($event)"
+          >
+          </app-upload-file>
+        </div>
+      </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="closeIntegrazioneDialog()"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="invioRichiestaIntegrazione()" [disabled]="disableControl()"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Esenzione CUP" [(visible)]="showMotivazioneEsenzioneCupDialog" styleClass="dialog-600" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-2">
+      <div class="p-col-12">
+        <div class="p-field">
+          <label class="p-text-bold" for="motivazioneEsenzioneCup">Motivazione dichiarazione esenzione CUP:</label>
+          <textarea id="motivazioneEsenzioneCup"pInputTextarea [rows]="5" [(ngModel)]="this.motivazioneEsenzioneCup" class="text-area-no-resize stretch"></textarea>
+        </div>
+      </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style"
+        (click)="showMotivazioneEsenzioneCupDialog = false; motivazioneEsenzioneCup = ''"></button>
+      <button pButton label="Conferma" class="btn-custom-style"
+        (click)="showMotivazioneEsenzioneCupDialog = false; showEsenzioneCupConfirmDialog = true;"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Esenzione CUP" [(visible)]="showEsenzioneCupConfirmDialog" (onHide)="closeValidaDialog()"
+  styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+  <div>
+    Confermi di voler dichiarare l'esenzione dal pagamento del CUP?
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style btn-dialog-validazione-pratica"
+              style="height: 36px; width: 160px !important;"
+      (click)="showEsenzioneCupConfirmDialog = false; motivazioneEsenzioneCup = ''">
+        <span class="p-button-icon p-button-icon-left pi pi-check" aria-hidden="true"></span>
+      </button>
+      <button pButton label="Conferma" class="btn-custom-style" style="height: 36px; width: 160px !important;"
+        (click)="confermaEsenzioneCup()">
+        <span class="p-button-icon p-button-icon-left pi pi-check" aria-hidden="true"></span>
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Numero protocollo:" [(visible)]="showProtocolloDialog" (onHide)="closeProtocolloDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true" [closable]="false">
+  <div class="p-grid p-m-2">
+      <div class="p-col-12">
+        <input *ngIf="!isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+        <input *ngIf="isProtocollata" type="text" pInputText [(ngModel)]="this.numProtocollo" class="stretch" [readonly]="true">
+        <label *ngIf="isProtocollata" for="txtProtocollo" class="p-text-bold p-pt-2" style="display: block;">Protocollazione avvenuta con successo</label>
+      </div>
+  </div>
+  <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button *ngIf="this.numProtocollo == '--|--'" pButton label="Protocolla" class="btn-custom-style"
+			    (click)="this[actionRiprotocollazione]()"></button>
+        <button pButton label="Chiudi" class="btn-custom-style" (click)="showProtocolloDialog = false"></button>
+      </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Verifica occupazione:" [(visible)]="errorDialogOverlap" (onHide)="errorDialogOverlap = false"  styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-1">
+      <div class="p-field">
+          <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+          <label class="p-text-bold" [innerHTML]="errorMessageOverlap"></label>
+      </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style" (click)="errorDialogOverlap = false"></button>
+      <button pButton label="Conferma" class="btn-custom-style" (click)="aggiornaRichiestaPareri()"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog header="Verifica occupazione:" [(visible)]="errorDialogOverlapRichiestaIntegrazione" (onHide)="errorDialogOverlapRichiestaIntegrazione = false"  styleClass="dialog-550" [draggable]="false" [resizable]="false" [modal]="true">
+  <div class="p-grid p-m-1">
+      <div class="p-field">
+          <button pButton icon="pi pi-exclamation-triangle" class="p-button-rounded p-button-warning p-button-text"></button>
+          <label class="p-text-bold" [innerHTML]="errorMessageOverlapRichiestaIntegrazione"></label>
+      </div>
+  </div>
+  <p-footer>
+    <div class="p-d-flex p-col-12 p-jc-end">
+      <button pButton label="Annulla" class="btn-custom-style" (click)="errorDialogOverlapRichiestaIntegrazione = false"></button>
+      <button pButton label="Conferma" class="btn-custom-style" (click)="statoRichiestaIntegrazione(idSelectedPratica, noteIstruttoreMunicipio, isEsente, idAllegatoRichiestaIntegrazione)"></button>
+    </div>
+  </p-footer>
+</p-dialog>

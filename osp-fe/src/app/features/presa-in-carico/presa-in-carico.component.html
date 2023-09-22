@@ -1,0 +1,65 @@
+<div class="p-grid p-nogutter p-pt-2 p-pr-3 p-pl-3 p-pb-3">
+    <h4 class="intestazione-componente">{{this.authService.getGroup() == 3 ? 'Assegnazione pratica' : 'Presa in carico'}}</h4>
+</div>
+
+<div class="p-m-3">
+    <app-table-prime-ng
+      [dataSource]="this.dataSource" 
+      [columnSchema]="this.columnSchema" 
+      [actions]="this.actions"
+      [initSortColumn]="initSortColumn" 
+      [directionSortColumn]="directionSortColumn"
+      (onEvent)="this.onTableEvent($event)"
+      [titleTable]="titleTable"
+      [exportName]="exportName"
+      [globalFilters]="globalFilters"
+      [customSort]=true
+    >
+    </app-table-prime-ng>
+</div> 
+
+<p-dialog header="Seleziona istruttore:" [(visible)]="showAssegnaDialog" (onHide)="closeAssegnaDialog()" styleClass="dialog-400" [draggable]="false" [resizable]="false" [modal]="true">
+    <div class="p-grid p-m-2"> 
+        <div class="p-col-12">
+            <p-dropdown [options]="istruttoriMunicipio" [(ngModel)]="selectedIstruttore" optionLabel="cognome"
+                styleClass="stretch" appendTo="body" placeholder="Seleziona...">
+                <ng-template pTemplate="selectedItem">
+                    <div *ngIf="selectedIstruttore">
+                        {{selectedIstruttore.nome + ' ' + selectedIstruttore.cognome}}
+                    </div>
+                </ng-template>
+                <ng-template let-istruttore pTemplate="item">
+                    {{istruttore.nome + ' ' + istruttore.cognome}}
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div> 
+    
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style"
+          (click)="closeAssegnaDialog()"></button>
+        <button pButton label="Conferma" class="btn-custom-style"
+          (click)="submitPrendiInCarico(true)" [disabled]="!this.selectedIstruttore"></button>
+
+          <!-- (click)="this.isRevoca || this.isDecadenza ? avviaRichiestaLavori(true) : submitPrendiInCarico(true)" [disabled]="!this.selectedIstruttore"> -->
+      </div>  
+    </p-footer>
+</p-dialog>
+
+<!-- 
+<p-dialog header="{{this.isRevoca ? 'Note per la richiesta dei lavori:' : 'Note per notificare la decadenza:'}}" [(visible)]="showIntegrazioneDialog" (onHide)="closeIntegrazioneDialog()" styleClass="dialog-600" [draggable]="false" [resizable]="false" [modal]="true">
+    <div class="p-grid p-m-2"> 
+        <div class="p-col-12">
+            <textarea pInputTextarea [rows]="5" [(ngModel)]="this.noteIstruttoreMunicipio" class="text-area-no-resize stretch"></textarea>
+        </div>
+    </div> 
+    <p-footer>
+      <div class="p-d-flex p-col-12 p-jc-end">
+        <button pButton label="Annulla" class="btn-custom-style"
+          (click)="closeIntegrazioneDialog()"></button>
+        <button pButton label="Conferma" class="btn-custom-style"
+          (click)="invioRichiestaLavori()" [disabled]="!this.noteIstruttoreMunicipio.trim()"></button>
+      </div>  
+    </p-footer>
+  </p-dialog> -->
